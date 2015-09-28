@@ -16,6 +16,8 @@ var {
 
 var Button = require('./Button');
 
+var BGWASH = 'rgba(255,255,255,0.8)';
+
 var GeneModal = React.createClass({
   propTypes: {
     animated: React.PropTypes.bool,
@@ -33,16 +35,26 @@ var GeneModal = React.createClass({
   },
   getInitialState: function() {
     return {
+      resultsFound: true,
       symbol: '',
       synonyms: [],
       name: '',
       description: '',
       entrezId: 0,
       entrezUrl: '',
+      status: 'No Page Loaded',
+      backButtonEnabled: false,
+      forwardButtonEnabled: false,
+      loading: true,
+      scalesPageToFit: true,
     };
   },
+  componentWillReceiveProps(newProps) {
+  },
   componentDidMount: function() {
-    this._getGeneInfo();
+    if (this.props.modalVisible) {
+      this._getGeneInfo();
+    }
   },
   render: function() {
     var modalBackgroundStyle = {
@@ -52,28 +64,47 @@ var GeneModal = React.createClass({
       ? {backgroundColor: '#fff', padding: 20}
       : null;
     return (
-      <Modal
-        animated={this.props.animated}
-        transparent={this.props.transparent}
-        visible={this.props.modalVisible}>
-        <View style={[styles.container, modalBackgroundStyle]}>
-          <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-            <Text style={styles.innerTitle}>{this.state.symbol}</Text>
-            <Text style={styles.innerRow}>{this.state.synonyms.join(', ')}</Text>
-            <Text style={styles.innerRow}>Full Name: {this.state.geneFullName}</Text>
-            <Text style={styles.innerRow}>Description: {this.state.geneDesc}</Text>
-            <Text style={styles.innerRow}>NCBI Entrez GeneID: {this.state.entrezId}</Text>
-            <Button
-              onPress={() => {
-                this.props.onClose();
-              }}
-              style={styles.modalButton}>
-              Close
-            </Button>
+      <View>
+        <Modal
+          animated={this.props.animated}
+          transparent={this.props.transparent}
+          visible={this.props.modalVisible}>
+          <View style={[styles.container, modalBackgroundStyle]}>
+            <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
+              { this.state.resultsFound
+                ? <View>
+                    <Text style={styles.innerTitle}>{this.state.symbol}</Text>
+                    <Text style={styles.innerRow}>{this.state.synonyms.join(', ')}</Text>
+                    <Text style={styles.innerRow}>Full Name: {this.state.geneFullName}</Text>
+                    <Text style={styles.innerRow}>Description: {this.state.geneDesc}</Text>
+                    <Text style={styles.innerRow}>NCBI Entrez GeneID: {this.state.entrezId}</Text>
+                  </View>
+                : <Text>
+                    Sorry, additional information for this gene is not available
+                  </Text>
+              }
+              <Button
+                onPress={() => {
+                  this.props.onClose();
+                }}
+                style={styles.modalButton}>
+                Close
+              </Button>
+            </View>
           </View>
-        </View>
-      </Modal>
+        </Modal>
+      </View>
     );
+  },
+  _onNavigationStateChange: function(navState) {
+    this.setState({
+      backButtonEnabled: navState.canGoBack,
+      forwardButtonEnabled: navState.canGoForward,
+      url: navState.url,
+      status: navState.title,
+      loading: navState.loading,
+      scalesPageToFit: true
+    });
   },
   _getGeneInfo: function() {
     var _this = this;
@@ -82,14 +113,20 @@ var GeneModal = React.createClass({
     fetch(geneApi)
       .then((response) => response.json())
       .then((resp) => {
-        _this.setState({
-          symbol: resp.symbol,
-          synonyms: resp.synonyms,
-          name: resp.name,
-          description: resp.description,
-          entrezId: resp.ncbiEntrezGeneId,
-          entrezUrl: resp.ncbiEntrezGeneUrl,
-        });
+        if (!resp.status === 404) {
+          _this.setState({
+            symbol: resp.symbol,
+            synonyms: resp.synonyms,
+            name: resp.name,
+            description: resp.description,
+            entrezId: resp.ncbiEntrezGeneId,
+            entrezUrl: resp.ncbiEntrezGeneUrl,
+          });
+        } else {
+          _this.setState({
+            resultsFound: false,
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -126,6 +163,10 @@ var styles = StyleSheet.create({
   },
   modalButton: {
     marginTop: 10,
+  },
+  webView: {
+    backgroundColor: BGWASH,
+    height: 350,
   },
 });
 

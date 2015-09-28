@@ -20,7 +20,9 @@ var {
   View,
 } = React;
 
-var autocomplete = React.createClass({
+var ALL_GENES = [];
+
+var AutoComplete = React.createClass({
   propTypes: {
     input: React.PropTypes.string,
     onSelect: React.PropTypes.func
@@ -34,10 +36,17 @@ var autocomplete = React.createClass({
     };
   },
   componentWillReceiveProps: function(newProps) {
-    this.findGenes(newProps.input);
+    // Check to make sure genes have been loaded initially first
+    if (ALL_GENES.length) {
+      this.matchGenes(newProps.input);
+    }
   },
   componentWillMount: function() {
-    this.findGenes(this.props.input);
+    var _this = this;
+    this.findGenes(function(response) {
+      ALL_GENES = response;
+      _this.matchGenes(_this.props.input);
+    });
   },
   render: function() {
     var numOpts = this.state.autocompleteOptions.length;
@@ -59,9 +68,10 @@ var autocomplete = React.createClass({
     // Make matched section of string bold by spliting it.
     // Don't need to worry about invalid input here because input is already
     // checked when geneObj is generated
-    var inpRegEx = new RegExp(this.props.input, 'i');;
-    var options = geneObj.option.split(inpRegEx);;
-    var matchExists = options.length === 2 && !!options[0] || !!options[1];
+    var inpRegEx = new RegExp(this.props.input, 'i');
+    var options = geneObj.option.split(inpRegEx);
+    var matchExists = options.length === 2 && (!!options[0] || !!options[1]);
+    var perfectMatch = options.length === 2 && !options[0] && !options[1];
 
     return (
       <TouchableHighlight
@@ -80,6 +90,12 @@ var autocomplete = React.createClass({
                   {options[1]}
                 </Text>
               </Text>
+            : perfectMatch
+            ? <Text style={styles.option}>
+                <Text style={styles.subOptionHighlight}>
+                  {this.props.input.toUpperCase()}
+                </Text>
+              </Text>
             : <Text style={styles.option}>
                 {geneObj.option}
               </Text>
@@ -88,13 +104,13 @@ var autocomplete = React.createClass({
             ? <Icon
                 name='foundation|clock'
                 size={25}
-                color={colorLightGray}
+                color={colorGray}
                 style={styles.searchIcon}
               />
             : <Icon
                 name='foundation|arrow-right'
                 size={25}
-                color={colorLightGray}
+                color={colorGray}
                 style={styles.searchIcon}
               />
           }
@@ -102,54 +118,54 @@ var autocomplete = React.createClass({
       </TouchableHighlight>
     );
   },
-  findGenes: function(input) {
-    // Possibly change this to database queries for speed instead of
-    // downloading all genes and iterating/filtering
-    var _this = this;
+  findGenes: function(callback) {
     var reqApi = 'http://amp.pharm.mssm.edu/Enrichr/json/' +
       'genemap.json?_=1442798351897';
+    fetch(reqApi)
+      .then((response) => response.json())
+      .then((resp) => callback(resp))
+      .catch((err) => {
+        console.log(err);
+      })
+      .done();
+  },
+  matchGenes: function(input) {
     var inpRegEx;
     try {
       inpRegEx = new RegExp(input, 'i');
     } catch(e) {
       console.log(e);
     }
-    if (inpRegEx) {
-      fetch(reqApi)
-        .then((response) => response.json())
-        .then((resp) => {
-          var acOptions = [];
-          var recent = recentSearches.getSearches();
-          // Iterate backwards to get most recent searches first
-          for (var i = recent.length; i === 0, i--;) {
-            if (!input.length ||
-              inpRegEx.test(recent[i]) && acOptions.length < 3) {
-              var option = {
-                option: recent[i],
-                recent: true,
-              };
-              acOptions.push(option);
-            }
-          }
-          resp.forEach(function(gene) {
-            if (inpRegEx.test(gene) && input.length && acOptions.length < 6) {
-              var option = {
-                option: gene,
-                recent: false,
-              };
-              acOptions.push(option);
-            }
-          });
-          _this.setState({
-            autocompleteOptions: acOptions,
-            geneDataSrc: this.state.geneDataSrc.cloneWithRows(acOptions)
-          });
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        .done();
+    var acOptions = [];
+    var recent = recentSearches.getSearches();
+    // Iterate backwards to get most recent searches first
+    for (var i = recent.length; i === 0, i--;) {
+      // If empty string, or recent search matches and there are no more than
+      // two recent searches already added.
+      if (!input.length || inpRegEx.test(recent[i]) && acOptions.length < 3) {
+        var option = {
+          option: recent[i],
+          recent: true,
+        };
+        acOptions.push(option);
+      }
     }
+    ALL_GENES.forEach(function(gene) {
+      // If gene matches input, input is not empty, there are no more than 6
+      // options already, and gene is not already an option (recent search)
+      if (inpRegEx.test(gene) && input.length && acOptions.length < 6 &&
+        acOptions.indexOf(gene) === -1) {
+        var option = {
+          option: gene,
+          recent: false,
+        };
+        acOptions.push(option);
+      }
+    });
+    this.setState({
+      autocompleteOptions: acOptions,
+      geneDataSrc: this.state.geneDataSrc.cloneWithRows(acOptions)
+    });
   }
 
 });
@@ -202,4 +218,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = autocomplete;
+module.exports = AutoComplete;
