@@ -1,5 +1,7 @@
 var React = require('react-native');
 var {
+  ActivityIndicatorIOS,
+  ListView,
   Modal,
   PixelRatio,
   StyleSheet,
@@ -10,8 +12,9 @@ var {
 
 var StyleVars = require('./StyleVars');
 var {
-  fontFamily,
   colorLightGray,
+  colorSecondary,
+  fontFamily,
 } = StyleVars;
 
 var Button = require('./Button');
@@ -35,26 +38,21 @@ var GeneModal = React.createClass({
   },
   getInitialState: function() {
     return {
+      resultsLoaded: false,
       resultsFound: true,
-      symbol: '',
-      synonyms: [],
-      name: '',
-      description: '',
-      entrezId: 0,
-      entrezUrl: '',
-      status: 'No Page Loaded',
-      backButtonEnabled: false,
-      forwardButtonEnabled: false,
-      loading: true,
-      scalesPageToFit: true,
+      geneModalDataSrc: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2
+      }),
+      geneSymbol: '',
     };
   },
   componentWillReceiveProps(newProps) {
+    console.log(newProps);
+    this._getGeneInfo();
   },
   componentDidMount: function() {
-    if (this.props.modalVisible) {
-      this._getGeneInfo();
-    }
+    console.log(this.props);
+    this._getGeneInfo();
   },
   render: function() {
     var modalBackgroundStyle = {
@@ -63,6 +61,7 @@ var GeneModal = React.createClass({
     var innerContainerTransparentStyle = this.props.transparent
       ? {backgroundColor: '#fff', padding: 20}
       : null;
+
     return (
       <View>
         <Modal
@@ -71,24 +70,40 @@ var GeneModal = React.createClass({
           visible={this.props.modalVisible}>
           <View style={[styles.container, modalBackgroundStyle]}>
             <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
-              { this.state.resultsFound
+              { this.state.resultsLoaded && this.state.resultsFound
                 ? <View>
-                    <Text style={styles.innerTitle}>{this.state.symbol}</Text>
-                    <Text style={styles.innerRow}>{this.state.synonyms.join(', ')}</Text>
-                    <Text style={styles.innerRow}>Full Name: {this.state.geneFullName}</Text>
-                    <Text style={styles.innerRow}>Description: {this.state.geneDesc}</Text>
-                    <Text style={styles.innerRow}>NCBI Entrez GeneID: {this.state.entrezId}</Text>
+                    <View style={styles.title}>
+                      <Text style={styles.innerTitle}>{this.state.geneSymbol}</Text>
+                    </View>
+                    <ListView
+                      dataSource={this.state.geneModalDataSrc}
+                      renderRow={this._renderInfo}
+                      style={styles.listView}
+                      automaticallyAdjustContentInsets={false}
+                    />
                   </View>
-                : <Text>
-                    Sorry, additional information for this gene is not available
-                  </Text>
+                : this.state.resultsLoaded
+                ? <View style={styles.title}>
+                      <Text style={styles.innerTitle}>{this.props.gene}</Text>
+                      <Text>
+                        Sorry, additional information for this gene is not available
+                      </Text>
+                    </View>
+                : <View>
+                    <View style={styles.title}>
+                      <Text style={styles.innerTitle}>{this.props.gene}</Text>
+                    </View>
+                    <View style={styles.spinner}>
+                      <ActivityIndicatorIOS size="large" />
+                    </View>
+                  </View>
               }
               <Button
                 onPress={() => {
                   this.props.onClose();
                 }}
                 style={styles.modalButton}>
-                Close
+                <Text style={styles.buttonText}>Close</Text>
               </Button>
             </View>
           </View>
@@ -96,15 +111,22 @@ var GeneModal = React.createClass({
       </View>
     );
   },
-  _onNavigationStateChange: function(navState) {
-    this.setState({
-      backButtonEnabled: navState.canGoBack,
-      forwardButtonEnabled: navState.canGoForward,
-      url: navState.url,
-      status: navState.title,
-      loading: navState.loading,
-      scalesPageToFit: true
-    });
+  _renderInfo: function(infoObj) {
+    var rowTitle = infoObj.title || '';
+    var rowContent = infoObj.content instanceof Array
+    ? infoObj.content.join(', ')
+    : infoObj.content;
+    return (
+      <View>
+        { rowContent.length
+          ? <View style={styles.row}>
+              <Text style={[styles.innerRow, styles.bold]}>{rowTitle}</Text>
+              <Text style={styles.innerRow}>{rowContent}</Text>
+            </View>
+          : <View></View>
+        }
+      </View>
+    );
   },
   _getGeneInfo: function() {
     var _this = this;
@@ -113,18 +135,34 @@ var GeneModal = React.createClass({
     fetch(geneApi)
       .then((response) => response.json())
       .then((resp) => {
-        if (!resp.status === 404) {
+        var info = [
+          {
+            title: 'Synonyms',
+            content: resp.synonyms || [],
+          },
+          {
+            title: 'Full Name',
+            content: resp.name || '',
+          },
+          {
+            title: 'Description',
+            content: resp.description || '',
+          },
+          {
+            title: 'NCBI Entrez Gene ID',
+            content: resp.ncbiEntrezGeneId || '',
+          }
+        ];
+        if (resp.status !== 404) {
           _this.setState({
-            symbol: resp.symbol,
-            synonyms: resp.synonyms,
-            name: resp.name,
-            description: resp.description,
-            entrezId: resp.ncbiEntrezGeneId,
-            entrezUrl: resp.ncbiEntrezGeneUrl,
+            geneSymbol: resp.symbol || _this.props.gene,
+            geneModalDataSrc: this.state.geneModalDataSrc.cloneWithRows(info),
+            resultsLoaded: true,
           });
         } else {
           _this.setState({
             resultsFound: false,
+            resultsLoaded: true,
           });
         }
       })
@@ -135,7 +173,15 @@ var GeneModal = React.createClass({
   }
 });
 
+var LISTVIEW_HEIGHT = 300;
+
 var styles = StyleSheet.create({
+  bold: {
+    fontWeight: 'bold',
+  },
+  buttonText: {
+    color: 'white',
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -145,28 +191,37 @@ var styles = StyleSheet.create({
     borderRadius: 10,
   },
   innerTitle: {
-    textAlign: 'center',
-    borderBottomWidth: 1,
-    borderColor: colorLightGray,
-    fontSize: 18,
     fontFamily: fontFamily,
-    paddingBottom: 5,
-    marginBottom: 5
+    fontSize: 18,
+    textAlign: 'center',
   },
   innerRow: {
-    borderBottomWidth: 1 / PixelRatio.get(),
-    borderColor: colorLightGray,
     fontSize: 14,
     fontFamily: fontFamily,
-    paddingBottom: 5,
-    marginBottom: 5
+  },
+  listView: {
+    height: LISTVIEW_HEIGHT,
   },
   modalButton: {
+    backgroundColor: colorSecondary,
     marginTop: 10,
   },
-  webView: {
-    backgroundColor: BGWASH,
-    height: 350,
+  row: {
+    borderBottomWidth: 1 / PixelRatio.get(),
+    borderColor: colorLightGray,
+    marginBottom: 5,
+    paddingBottom: 5,
+  },
+  spinner: {
+    alignItems: 'center',
+    height: LISTVIEW_HEIGHT,
+    justifyContent: 'center',
+  },
+  title: {
+    borderBottomWidth: 1,
+    borderColor: colorLightGray,
+    marginBottom: 5,
+    paddingBottom: 5,
   },
 });
 

@@ -125,8 +125,9 @@ var styles = StyleSheet.create({
     backgroundColor: colorLightGray,
   },
   option: {
-    fontWeight: 'bold',
     fontFamily: fontFamily,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   rowWrapper: {
     marginLeft: 5,
@@ -139,9 +140,9 @@ var styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     backgroundColor: 'white',
-    padding: 10,
+    padding: 30,
   }
 });
 

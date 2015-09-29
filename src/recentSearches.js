@@ -3,18 +3,25 @@ var StyleVars = require('./StyleVars');
 
 var RECENT_SEARCHES = [];
 
+function exists(searchStr) {
+  return RECENT_SEARCHES.indexOf(searchStr) === -1;
+}
+
+function isString(input) {
+  return typeof input === 'string' || input instanceof String;
+}
+
 module.exports = {
   getSearches: function() {
     return RECENT_SEARCHES;
   },
   addSearch: function(searchStr) {
-    if (RECENT_SEARCHES.indexOf(searchStr) === -1 &&
-      typeof searchStr === 'string' || searchStr instanceof String) {
+    if (!exists(searchStr) && isString(searchStr)) {
       RECENT_SEARCHES.push(searchStr);
     }
   },
   removeSearch: function(searchStr) {
-    if (RECENT_SEARCHES.indexOf(searchStr) !== -1) {
+    if (exists(searchStr)) {
       RECENT_SEARCHES.splice(index, 1);
     }
   },

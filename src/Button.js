@@ -4,14 +4,13 @@ var {
   PixelRatio,
   StyleSheet,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   View,
 } = React;
 
 var StyleVars = require('./StyleVars');
 var {
   fontFamily,
-  colorSecondary,
 } = StyleVars;
 
 var Button = React.createClass({
@@ -33,14 +32,11 @@ var Button = React.createClass({
       color: this.state.active ? '#fff' : '#000',
     };
     return (
-      <TouchableHighlight
-        onHideUnderlay={this._onUnhighlight}
+      <TouchableOpacity
         onPress={this.props.onPress}
-        onShowUnderlay={this._onHighlight}
-        style={[styles.button, this.props.style]}
-        underlayColor={colorSecondary}>
+        style={[styles.button, this.props.style]}>
           <Text style={[styles.buttonText, colorStyle]}>{this.props.children}</Text>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 });

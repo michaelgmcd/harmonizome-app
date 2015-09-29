@@ -32,28 +32,16 @@ var NavBar = React.createClass({
   _setModalVisible: function(visible) {
     this.setState({modalVisible: visible});
   },
-  _toggleAnimated: function() {
-    this.setState({animated: !this.state.animated});
-  },
-  _toggleTransparent: function() {
-    this.setState({transparent: !this.state.transparent});
-  },
   render: function() {
     return (
       <View>
         <GeneModal
           gene={this.props.gene}
           modalVisible={this.state.modalVisible}
-          onClose={() => {
-            this._setModalVisible(false);
-          }}
+          onClose={() => { this._setModalVisible(false); }}
         />
         <View style={styles.navContainer}>
-          <TouchableOpacity
-            onPress={() => {
-              this.props.onBack();
-            }}
-          >
+          <TouchableOpacity onPress={() => { this.props.onBack(); }}>
             <Image
               source={require('image!nav-back')}
               resizeMode={'contain'}
@@ -71,11 +59,7 @@ var NavBar = React.createClass({
                 <Text style={styles.navTitle}>{this.props.gene}</Text>
             }
           </View>
-          <TouchableOpacity
-            onPress={() => {
-              this._setModalVisible(true);
-            }}
-          >
+          <TouchableOpacity onPress={() => { this._setModalVisible(true); }}>
             <Icon
               name='fontawesome|circle-thin'
               size={28}
@@ -106,13 +90,13 @@ var styles = StyleSheet.create({
     paddingRight: 10,
   },
   navTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontFamily: fontFamily,
     color: colorPrimary,
     textAlign: 'center',
   },
   navTitleWithSub: {
-    fontSize: 16,
+    fontSize: 18,
     fontFamily: fontFamily,
     color: colorPrimary,
     textAlign: 'center',

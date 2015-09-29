@@ -11,6 +11,7 @@ var {
   colorPrimaryDark,
   colorBackground,
   colorGray,
+  colorDarkGray,
   colorLightGray,
   fontFamily,
   titleFont,
@@ -148,14 +149,14 @@ var styles = StyleSheet.create({
     marginBottom: 10,
   },
   title: {
-    color: 'white',
+    color: colorPrimary,
     fontFamily: titleFont,
     fontSize: 36,
     textAlign: 'center',
   },
   titleIcon: {
     width: 100,
-    marginBottom: 20,
+    marginBottom: 10,
   },
   searchContainer: {
     borderColor: colorGray,
@@ -164,8 +165,8 @@ var styles = StyleSheet.create({
     marginLeft: 15,
     marginRight: 15,
     height: 50,
-    shadowColor: colorPrimaryDark,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colorDarkGray,
+    shadowOffset: { width: 0, height: 0 },
   },
   searchBar: {
     flex: 4,
@@ -174,8 +175,8 @@ var styles = StyleSheet.create({
     paddingLeft: 5,
     height: 40,
     backgroundColor: 'white',
-    shadowColor: colorPrimaryDark,
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: colorDarkGray,
+    shadowOffset: { width: 0, height: 0 },
   }
 });
 
