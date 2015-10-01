@@ -42,7 +42,7 @@ var AutoComplete = React.createClass({
       this.matchGenes(newProps.input);
     }
   },
-  componentWillMount: function() {
+  componentDidMount: function() {
     var _this = this;
     this.findGenes(function(response) {
       ALL_GENES = response;
@@ -55,7 +55,7 @@ var AutoComplete = React.createClass({
       <View
         style={[
           styles.listViewContainer,
-          { height: numOpts > 4 ? 5 * 45.5 : numOpts * 45.5 },
+          { height: numOpts > 4 ? 5 * 45.25 : numOpts * 45.25 },
         ]}>
         <ListView
           dataSource={this.state.geneDataSrc}
@@ -138,6 +138,7 @@ var AutoComplete = React.createClass({
       console.log(e);
     }
     var acOptions = [];
+    var names = []
     var recent = recentSearches.getSearches();
     // Iterate backwards to get most recent searches first
     for (var i = recent.length; i === 0, i--;) {
@@ -149,13 +150,14 @@ var AutoComplete = React.createClass({
           recent: true,
         };
         acOptions.push(option);
+        names.push(recent[i]);
       }
     }
     ALL_GENES.forEach(function(gene) {
       // If gene matches input, input is not empty, there are no more than 6
       // options already, and gene is not already an option (recent search)
       if (inpRegEx.test(gene) && input.length && acOptions.length < 6 &&
-        acOptions.indexOf(gene) === -1) {
+        names.indexOf(gene) === -1) {
         var option = {
           option: gene,
           recent: false,
@@ -163,6 +165,7 @@ var AutoComplete = React.createClass({
         acOptions.push(option);
       }
     });
+    console.log(acOptions);
     this.setState({
       autocompleteOptions: acOptions,
       geneDataSrc: this.state.geneDataSrc.cloneWithRows(acOptions)
@@ -184,36 +187,36 @@ var styles = StyleSheet.create({
     shadowOpacity: .8,
   },
   iconPlaceholder: {
-    flex: 1,
     height: 25,
   },
   option: {
-    flex: 4,
+    color: '#919191',
     fontFamily: fontFamily,
   },
   subOption: {
+    color: 'black',
     fontFamily: fontFamily,
   },
   subOptionHighlight: {
-    fontWeight: 'bold',
     fontFamily: fontFamily,
   },
   rowInner: {
     borderTopWidth: 0,
     borderBottomWidth: 1 / PixelRatio.get(),
     borderColor: colorGray,
-    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: 'white',
-    paddingLeft: 5,
     paddingTop: 10,
     paddingBottom: 10,
   },
+  rowWrapper: {
+    marginLeft: 15,
+    marginRight: 15,
+  },
   searchIcon: {
     textAlign: 'right',
-    flex: 1,
     height: 25,
     width: 25,
   }

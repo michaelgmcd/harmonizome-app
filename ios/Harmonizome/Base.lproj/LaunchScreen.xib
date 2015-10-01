@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <capability name="Alignment constraints with different attributes" minToolsVersion="5.1"/>
     </dependencies>
     <customFonts key="customFonts">
         <mutableArray key="Georgia.ttf">
@@ -18,19 +19,35 @@
                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Harmonizome" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="kId-c2-rCX">
                     <rect key="frame" x="0.0" y="217" width="480" height="45"/>
                     <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="36"/>
-                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="textColor" red="0.20392156859999999" green="0.21960784310000001" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" image="logo-lg" translatesAutoresizingMaskIntoConstraints="NO" id="q7Y-dv-cUz">
-                    <rect key="frame" x="190" y="120" width="100" height="87"/>
-                </imageView>
+                <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="F6X-xe-bMW">
+                    <rect key="frame" x="8" y="8" width="464" height="231"/>
+                    <subviews>
+                        <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" misplaced="YES" image="logo-lg" translatesAutoresizingMaskIntoConstraints="NO" id="VGK-kq-OCd">
+                            <rect key="frame" x="182" y="67" width="100" height="87"/>
+                        </imageView>
+                    </subviews>
+                    <color key="backgroundColor" red="0.20392156859999999" green="0.21960784310000001" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
+                    <color key="tintColor" red="0.20392156859999999" green="0.21960784310000001" blue="0.2666666667" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="VGK-kq-OCd" firstAttribute="centerX" secondItem="F6X-xe-bMW" secondAttribute="centerX" id="tZV-AM-vHW"/>
+                        <constraint firstAttribute="centerY" secondItem="VGK-kq-OCd" secondAttribute="centerY" constant="5" id="xSw-s4-EBA"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" red="0.20392156862745098" green="0.2196078431372549" blue="0.26666666666666666" alpha="1" colorSpace="calibratedRGB"/>
             <constraints>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="top" secondItem="q7Y-dv-cUz" secondAttribute="bottom" constant="8" id="HpI-lv-Z6O"/>
-                <constraint firstItem="kId-c2-rCX" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="JIV-jd-uoP"/>
+                <constraint firstItem="F6X-xe-bMW" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="7b9-pr-20R"/>
+                <constraint firstItem="F6X-xe-bMW" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="Gv8-35-cTU"/>
                 <constraint firstAttribute="centerX" secondItem="kId-c2-rCX" secondAttribute="centerX" id="Koa-jz-hwk"/>
-                <constraint firstItem="q7Y-dv-cUz" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="bAX-Gq-jia"/>
+                <constraint firstItem="kId-c2-rCX" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="LOI-Wm-xDU"/>
+                <constraint firstItem="F6X-xe-bMW" firstAttribute="leading" secondItem="iN0-l3-epB" secondAttribute="leading" id="SJb-Ko-Arr"/>
+                <constraint firstItem="kId-c2-rCX" firstAttribute="centerY" secondItem="F6X-xe-bMW" secondAttribute="bottom" id="UZz-gk-B0M"/>
+                <constraint firstAttribute="trailing" secondItem="F6X-xe-bMW" secondAttribute="trailing" id="XEk-PO-x8q"/>
+                <constraint firstItem="F6X-xe-bMW" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="lzU-54-Gy0"/>
+                <constraint firstItem="kId-c2-rCX" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="u9b-Mu-KUQ"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>

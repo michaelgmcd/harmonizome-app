@@ -4,7 +4,7 @@ var StyleVars = require('./StyleVars');
 var RECENT_SEARCHES = [];
 
 function exists(searchStr) {
-  return RECENT_SEARCHES.indexOf(searchStr) === -1;
+  return RECENT_SEARCHES.indexOf(searchStr) !== -1;
 }
 
 function isString(input) {

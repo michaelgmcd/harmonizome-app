@@ -76,7 +76,7 @@ var home = React.createClass({
               this._goToResults(this.state.input);
             }}
             value={this.state.input}
-            placeholder={'Search...'}
+            placeholder={'Enter Entrez gene symbol, e.g. STAT3...'}
           />
           { !this.state.atHome ?
               <Text
@@ -138,7 +138,7 @@ var styles = StyleSheet.create({
     width: 10,
   },
   container: {
-    paddingTop: 20,
+    paddingTop: 25,
     flex: 1,
     backgroundColor: colorBackground
   },
@@ -169,10 +169,10 @@ var styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 0 },
   },
   searchBar: {
-    flex: 4,
+    flex: 3,
     fontFamily: fontFamily,
     marginTop: 5,
-    paddingLeft: 5,
+    paddingLeft: 15,
     height: 40,
     backgroundColor: 'white',
     shadowColor: colorDarkGray,

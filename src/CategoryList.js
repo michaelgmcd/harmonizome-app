@@ -4,19 +4,20 @@ var NavBar = require('./NavBar');
 var StyleVars = require('./StyleVars');
 var {
   colorBackground,
-  colorLightGray,
+  colorPrimaryDark,
   colorGray,
   fontFamily,
 } = StyleVars;
 
 var {
+  Image,
   ListView,
   PixelRatio,
   StyleSheet,
+  Text,
   TextInput,
   TouchableHighlight,
   View,
-  Text,
 } = React;
 
 var Results = React.createClass({
@@ -39,21 +40,40 @@ var Results = React.createClass({
         dataSource={this.state.libraryDataSrc}
         renderRow={this.renderLibraries}
         style={styles.listView}
+        contentContainerStyle={styles.listViewContainer}
         automaticallyAdjustContentInsets={false}
       />
     );
   },
   renderLibraries: function(libObj) {
+    var icons = {
+      'Cell Types': require('image!cell-types'),
+      Crowd: require('image!crowd'),
+      'Disease/Drugs': require('image!drugs'),
+      Legacy: require('image!legacy'),
+      Misc: require('image!misc'),
+      Ontologies: require('image!ontologies'),
+      Pathways: require('image!pathways'),
+      Transcription: require('image!dna'),
+    };
     return (
-      <TouchableHighlight
-        onPress={() => this.goToLibrary(libObj)}
-        style={styles.rowWrapper}>
-        <View style={styles.rowInner}>
-          <Text style={styles.option}>
-            {libObj.type}
-          </Text>
-        </View>
-      </TouchableHighlight>
+      <View style={styles.rowWrapper}>
+        <TouchableHighlight onPress={() => this.goToLibrary(libObj)}>
+          <View style={styles.rowInner}>
+            { icons[libObj.type]
+              ? <Image
+                  source={icons[libObj.type]}
+                  resizeMode={'contain'}
+                  style={styles.optionIcon}
+                />
+              : null
+            }
+            <Text style={styles.option}>
+              {libObj.type}
+            </Text>
+          </View>
+        </TouchableHighlight>
+      </View>
     );
   },
   goToLibrary: function(categoryObj) {
@@ -121,28 +141,43 @@ var Results = React.createClass({
 
 var styles = StyleSheet.create({
   listView: {
-    flex: 10,
-    backgroundColor: colorLightGray,
+    backgroundColor: colorBackground,
+    paddingLeft: 5,
+    paddingRight: 5,
+    paddingBottom: 5,
+  },
+  listViewContainer: {
+    marginBottom: 5,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    backgroundColor: colorBackground,
   },
   option: {
+    marginTop: 10,
     fontFamily: fontFamily,
     fontSize: 16,
     fontWeight: 'bold',
   },
+  optionIcon: {
+    height: 100,
+    width: 100,
+  },
   rowWrapper: {
-    marginLeft: 5,
-    marginRight: 5,
     marginTop: 5,
+    height: 155,
+    width: 175,
+    marginBottom: 5,
   },
   rowInner: {
-    borderWidth: 1 / PixelRatio.get(),
-    borderColor: colorGray,
-    flex: 1,
-    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: colorPrimaryDark,
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    padding: 30,
+    padding: 20,
+    paddingBottom: 10,
   }
 });
 

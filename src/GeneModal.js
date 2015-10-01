@@ -12,6 +12,7 @@ var {
 
 var StyleVars = require('./StyleVars');
 var {
+  colorGray,
   colorLightGray,
   colorSecondary,
   fontFamily,
@@ -47,18 +48,20 @@ var GeneModal = React.createClass({
     };
   },
   componentWillReceiveProps(newProps) {
-    console.log(newProps);
-    this._getGeneInfo();
+    if (newProps.modalVisible) {
+      this._getGeneInfo();
+    }
   },
   componentDidMount: function() {
-    console.log(this.props);
-    this._getGeneInfo();
+    if (this.props.modalVisible) {
+      this._getGeneInfo();
+    }
   },
   render: function() {
     var modalBackgroundStyle = {
       backgroundColor: this.props.transparent ? 'rgba(0, 0, 0, 0.5)' : 'white',
     };
-    var innerContainerTransparentStyle = this.props.transparent
+    var tranparentStyle = this.props.transparent
       ? {backgroundColor: '#fff', padding: 20}
       : null;
 
@@ -69,7 +72,7 @@ var GeneModal = React.createClass({
           transparent={this.props.transparent}
           visible={this.props.modalVisible}>
           <View style={[styles.container, modalBackgroundStyle]}>
-            <View style={[styles.innerContainer, innerContainerTransparentStyle]}>
+            <View style={[styles.innerContainer, tranparentStyle]}>
               { this.state.resultsLoaded && this.state.resultsFound
                 ? <View>
                     <View style={styles.title}>
@@ -83,17 +86,22 @@ var GeneModal = React.createClass({
                     />
                   </View>
                 : this.state.resultsLoaded
-                ? <View style={styles.title}>
+                ? <View>
+                    <View style={styles.title}>
                       <Text style={styles.innerTitle}>{this.props.gene}</Text>
-                      <Text>
-                        Sorry, additional information for this gene is not available
+                    </View>
+                    <View style={styles.infoPlaceholder}>
+                      <Text style={styles.text}>
+                        Sorry, additional information for this gene is
+                        currently not available.
                       </Text>
                     </View>
+                  </View>
                 : <View>
                     <View style={styles.title}>
                       <Text style={styles.innerTitle}>{this.props.gene}</Text>
                     </View>
-                    <View style={styles.spinner}>
+                    <View style={styles.infoPlaceholder}>
                       <ActivityIndicatorIOS size="large" />
                     </View>
                   </View>
@@ -131,7 +139,7 @@ var GeneModal = React.createClass({
   _getGeneInfo: function() {
     var _this = this;
     var geneApi = 'http://amp.pharm.mssm.edu/Harmonizome/api/1.0/gene/' +
-      this.props.gene;
+      this.props.gene + '?min=true';
     fetch(geneApi)
       .then((response) => response.json())
       .then((resp) => {
@@ -181,6 +189,7 @@ var styles = StyleSheet.create({
   },
   buttonText: {
     color: 'white',
+    fontFamily: fontFamily,
   },
   container: {
     flex: 1,
@@ -209,19 +218,21 @@ var styles = StyleSheet.create({
   row: {
     borderBottomWidth: 1 / PixelRatio.get(),
     borderColor: colorLightGray,
-    marginBottom: 5,
+    paddingTop: 5,
     paddingBottom: 5,
   },
-  spinner: {
+  infoPlaceholder: {
     alignItems: 'center',
     height: LISTVIEW_HEIGHT,
     justifyContent: 'center',
   },
+  text: {
+    fontFamily: fontFamily,
+  },
   title: {
     borderBottomWidth: 1,
-    borderColor: colorLightGray,
-    marginBottom: 5,
-    paddingBottom: 5,
+    borderColor: colorGray,
+    paddingBottom: 10,
   },
 });
 
