@@ -58,7 +58,7 @@ var AutoComplete = React.createClass({
           { height: numOpts > 4 ? 5 * 45.25 : numOpts * 45.25 },
         ]}>
         <ListView
-          dataSource={this.state.geneDataSrc}
+          dataSource={this.state.geDataSrc}
           renderRow={this.renderGenes}
           automaticallyAdjustContentInsets={false}
         />
