@@ -1,11 +1,15 @@
 var React = require('react-native');
-var LibraryResults = require('./LibraryResults');
+var LibraryList = require('./LibraryList');
 var NavBar = require('./NavBar');
 var StyleVars = require('./StyleVars');
 var {
   colorBackground,
+  colorBorderTop,
+  colorBorderSide,
+  colorBorderBottom,
   colorPrimaryDark,
   colorGray,
+  colorGrayDark,
   fontFamily,
 } = StyleVars;
 
@@ -17,37 +21,66 @@ var {
   Text,
   TextInput,
   TouchableHighlight,
+  TouchableOpacity,
   View,
 } = React;
 
+var lastResult = [];
+
 var Results = React.createClass({
   propTypes: {
-    gene: React.PropTypes.string
+    gene: React.PropTypes.string,
+    useLastResult: React.PropTypes.bool,
   },
   getInitialState: function() {
     return {
-      libraryDataSrc: new ListView.DataSource({
+      networkError: false,
+      categoryDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
       }),
     };
   },
   componentWillMount: function() {
-    this.getLibraries(this.props.gene);
+    if (this.props.useLastResult) {
+      this.setState({
+        categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(lastResult)
+      });
+    } else {
+      this._getGSLibraries(this.props.gene);
+    }
   },
   render: function() {
-    return (
-      <ListView
-        dataSource={this.state.libraryDataSrc}
-        renderRow={this.renderLibraries}
-        style={styles.listView}
-        contentContainerStyle={styles.listViewContainer}
-        automaticallyAdjustContentInsets={false}
-      />
-    );
+    if (this.state.networkError) {
+      return (
+        <View style={styles.errorWrapper}>
+          <Image
+            source={require('image!hazard')}
+            resizeMode={'contain'}
+            style={styles.errorIcon}
+          />
+          <Text style={styles.errorText}>No Network Connection</Text>
+          <TouchableOpacity
+            style={styles.errorButton}
+            onPress={() => { this._getGSLibraries(this.props.gene); }}>
+            <Text style={styles.bold}>Try Again?</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    } else {
+      return (
+        <ListView
+          dataSource={this.state.categoryDataSrc}
+          renderRow={this._renderCategories}
+          style={styles.listView}
+          contentContainerStyle={styles.listViewContainer}
+          automaticallyAdjustContentInsets={false}
+        />
+      );
+    }
   },
-  renderLibraries: function(libObj) {
+  _renderCategories: function(catObj) {
     var icons = {
-      'Cell Types': require('image!cell-types'),
+      'Cell Types': require('image!cell_types'),
       Crowd: require('image!crowd'),
       'Disease/Drugs': require('image!drugs'),
       Legacy: require('image!legacy'),
@@ -58,88 +91,132 @@ var Results = React.createClass({
     };
     return (
       <View style={styles.rowWrapper}>
-        <TouchableHighlight onPress={() => this.goToLibrary(libObj)}>
+        <TouchableHighlight onPress={() => this._goToLibraries(catObj)}>
           <View style={styles.rowInner}>
-            { icons[libObj.type]
-              ? <Image
-                  source={icons[libObj.type]}
-                  resizeMode={'contain'}
-                  style={styles.optionIcon}
-                />
-              : null
-            }
+            <Image
+                source={icons[catObj.type]}
+                resizeMode={'contain'}
+                style={styles.optionIcon}
+              />
             <Text style={styles.option}>
-              {libObj.type}
+              {catObj.type}
             </Text>
           </View>
         </TouchableHighlight>
       </View>
     );
   },
-  goToLibrary: function(categoryObj) {
-    var _this = this;
+  _goToLibraries: function(categoryObj) {
     this.props.navigator.push({
-      name: 'LibraryResults',
-      component: LibraryResults,
-      passProps: { results: categoryObj.libraries },
+      name: 'Library List',
+      component: LibraryList,
+      passProps: categoryObj,
       navigationBar: (
         <NavBar
           gene={this.props.gene}
           category={categoryObj.type}
-          onBack={() => {
-            _this.props.navigator.pop();
-          }}
         />
       )
     });
   },
-  getLibraries: function(inputGene) {
+  _getGSLibraries: function(inputGene) {
     var _this = this;
-    var resultsApi = 'http://amp.pharm.mssm.edu/Enrichr/genemap?gene=' +
+    var datasetsUrl = 'http://amp.pharm.mssm.edu/Enrichr/datasetStatistics';
+    var termsUrl = 'http://amp.pharm.mssm.edu/Enrichr/genemap?gene=' +
       inputGene + '&setup=true&json=true&_=1442611548980';
-    fetch(resultsApi)
-      .then((response) => response.json())
-      .then((resp) => {
-        // Transform response object to array of objects with keys as values in
-        // object
-        var data = [];
-        resp.categories.forEach(function(catObj) {
-          var newLib = {
-            type: catObj.name,
-            libraries: []
-          };
-          catObj.libraries.forEach(function(categoryObj) {
-            for (var libraryName in resp.gene) {
-              if (resp.gene.hasOwnProperty(libraryName)) {
-                if (categoryObj.name === libraryName) {
-                  var name = libraryName.replace(/_/g, ' ');
-                  var format = categoryObj.format
-                    .replace(/\{1\}/, 'each of the following')
-                    .replace(/\{0\}/, _this.props.gene);
-                  categoryObj.name = name;
-                  categoryObj.genes = resp.gene[libraryName];
-                  categoryObj.format = format;
-                  newLib.libraries.push(categoryObj);
+    fetch(datasetsUrl)
+      .then((dsResponse) => dsResponse.json())
+      .then((datasets) => {
+        fetch(termsUrl)
+          .then((tResponse) => tResponse.json())
+          .then((termsResp) => {
+            console.log(datasets);
+            // Transform response object to array of objects with keys as values in
+            // object
+            var data = [];
+            termsResp.categories.forEach(function(catObj) {
+              var newLib = {
+                type: catObj.name,
+                libraries: []
+              };
+              catObj.libraries.forEach(function(categoryObj) {
+                for (var libraryName in termsResp.gene) {
+                  if (termsResp.gene.hasOwnProperty(libraryName)) {
+                    if (categoryObj.name === libraryName) {
+                      var name = libraryName.replace(/_/g, ' ');
+                      var format = categoryObj.format
+                        .replace(/\{1\}/, 'each of the following')
+                        .replace(/\{0\}/, _this.props.gene);
+                      categoryObj.name = name;
+                      categoryObj.terms = termsResp.gene[libraryName];
+                      categoryObj.format = format;
+                      // Iterate over all libraries from datasets endpoint until
+                      // name matches and add the link to categoryObj
+                      for (var i = 0; i < datasets.statistics.length; i++) {
+                        var dataset = datasets.statistics[i];
+                        if (dataset.libraryName === libraryName) {
+                          categoryObj.link = dataset.link;
+                          break;
+                        }
+                      }
+                      newLib.libraries.push(categoryObj);
+                    }
+                  }
                 }
+              });
+              if (newLib.libraries.length) {
+                data.push(newLib);
               }
-            }
-          });
-          if (newLib.libraries.length) {
-            data.push(newLib);
-          }
-        });
-        _this.setState({
-          libraryDataSrc: this.state.libraryDataSrc.cloneWithRows(data)
-        });
+            });
+            lastResult = data;
+            _this.setState({
+              networkError: false,
+              categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(data)
+            });
+          })
+          .catch((err) => {
+            _this.setState({ networkError: true });
+          })
+          .done();
       })
       .catch((err) => {
-        console.log(err);
+        _this.setState({ networkError: true });
       })
       .done();
   }
 });
 
 var styles = StyleSheet.create({
+  hazardIcon: {
+    height: 82,
+    width: 120,
+  },
+  bold: {
+    fontFamily: fontFamily,
+    fontWeight: 'bold',
+  },
+  errorWrapper: {
+    flex: 1,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorButton: {
+    backgroundColor: 'white',
+    marginTop: 10,
+    borderRadius: 5,
+    padding: 15,
+    paddingLeft: 30,
+    paddingRight: 30,
+    borderWidth: 1,
+    borderColor: colorBorderSide,
+    borderTopColor: colorBorderTop,
+    borderBottomColor: colorBorderBottom,
+  },
+  errorText: {
+    fontFamily: fontFamily,
+    marginTop: 5,
+  },
   listView: {
     backgroundColor: colorBackground,
     paddingLeft: 5,
@@ -167,11 +244,14 @@ var styles = StyleSheet.create({
     marginTop: 5,
     height: 155,
     width: 175,
-    marginBottom: 5,
+    marginBottom: 10,
   },
   rowInner: {
     borderWidth: 1,
-    borderColor: colorPrimaryDark,
+    borderRadius: 3,
+    borderColor: colorBorderSide,
+    borderTopColor: colorBorderTop,
+    borderBottomColor: colorBorderBottom,
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',

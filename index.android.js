@@ -4,7 +4,7 @@ var React = require('react-native');
 var Router = require('./src/Router');
 var {AppRegistry,} = React;
 
-var gene = React.createClass({
+var Harmonizome = React.createClass({
   render: function() {
     return (
       <Router />
@@ -12,4 +12,4 @@ var gene = React.createClass({
   }
 });
 
-AppRegistry.registerComponent('gene', () => gene);
+AppRegistry.registerComponent('harmonizome', () => Harmonizome);

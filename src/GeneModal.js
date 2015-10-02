@@ -1,8 +1,9 @@
 var React = require('react-native');
 var {
   ActivityIndicatorIOS,
+  Dimensions,
+  LinkingIOS,
   ListView,
-  Modal,
   PixelRatio,
   StyleSheet,
   Text,
@@ -14,28 +15,20 @@ var StyleVars = require('./StyleVars');
 var {
   colorGray,
   colorLightGray,
-  colorSecondary,
+  colorTeal,
+  colorUrl,
   fontFamily,
 } = StyleVars;
 
 var Button = require('./Button');
 
 var BGWASH = 'rgba(255,255,255,0.8)';
+var windowDim = Dimensions.get('window');
 
 var GeneModal = React.createClass({
   propTypes: {
-    animated: React.PropTypes.bool,
-    modalVisible: React.PropTypes.bool,
-    transparent: React.PropTypes.bool,
     gene: React.PropTypes.string.isRequired,
     onClose: React.PropTypes.func,
-  },
-  getDefaultProps: function() {
-    return {
-      animated: false,
-      modalVisible: false,
-      transparent: true,
-    };
   },
   getInitialState: function() {
     return {
@@ -48,105 +41,94 @@ var GeneModal = React.createClass({
     };
   },
   componentWillReceiveProps(newProps) {
-    if (newProps.modalVisible) {
-      this._getGeneInfo();
-    }
+    this._getGeneInfo(newProps.gene);
   },
   componentDidMount: function() {
-    if (this.props.modalVisible) {
-      this._getGeneInfo();
-    }
+    this._getGeneInfo(this.props.gene);
   },
   render: function() {
     var modalBackgroundStyle = {
-      backgroundColor: this.props.transparent ? 'rgba(0, 0, 0, 0.5)' : 'white',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
     };
-    var tranparentStyle = this.props.transparent
-      ? {backgroundColor: '#fff', padding: 20}
-      : null;
-
+    var tranparentStyle = { backgroundColor: '#fff', padding: 20 };
     return (
-      <View>
-        <Modal
-          animated={this.props.animated}
-          transparent={this.props.transparent}
-          visible={this.props.modalVisible}>
-          <View style={[styles.container, modalBackgroundStyle]}>
-            <View style={[styles.innerContainer, tranparentStyle]}>
-              { this.state.resultsLoaded && this.state.resultsFound
-                ? <View>
-                    <View style={styles.title}>
-                      <Text style={styles.innerTitle}>{this.state.geneSymbol}</Text>
-                    </View>
-                    <ListView
-                      dataSource={this.state.geneModalDataSrc}
-                      renderRow={this._renderInfo}
-                      style={styles.listView}
-                      automaticallyAdjustContentInsets={false}
-                    />
-                  </View>
-                : this.state.resultsLoaded
-                ? <View>
-                    <View style={styles.title}>
-                      <Text style={styles.innerTitle}>{this.props.gene}</Text>
-                    </View>
-                    <View style={styles.infoPlaceholder}>
-                      <Text style={styles.text}>
-                        Sorry, additional information for this gene is
-                        currently not available.
-                      </Text>
-                    </View>
-                  </View>
-                : <View>
-                    <View style={styles.title}>
-                      <Text style={styles.innerTitle}>{this.props.gene}</Text>
-                    </View>
-                    <View style={styles.infoPlaceholder}>
-                      <ActivityIndicatorIOS size="large" />
-                    </View>
-                  </View>
-              }
-              <Button
-                onPress={() => {
-                  this.props.onClose();
-                }}
-                style={styles.modalButton}>
-                <Text style={styles.buttonText}>Close</Text>
-              </Button>
-            </View>
-          </View>
-        </Modal>
+      <View style={[styles.container, modalBackgroundStyle]}>
+        <View style={[styles.innerContainer, tranparentStyle]}>
+          { this.state.resultsLoaded && this.state.resultsFound
+            ? <View>
+                <View style={styles.title}>
+                  <Text style={styles.innerTitle}>{this.state.geneSymbol}</Text>
+                </View>
+                <ListView
+                  dataSource={this.state.geneModalDataSrc}
+                  renderRow={this._renderInfo}
+                  style={styles.listView}
+                  automaticallyAdjustContentInsets={false}
+                />
+              </View>
+            : this.state.resultsLoaded
+            ? <View>
+                <View style={styles.title}>
+                  <Text style={styles.innerTitle}>{this.props.gene}</Text>
+                </View>
+                <View style={styles.infoPlaceholder}>
+                  <Text style={styles.text}>
+                    Sorry, additional information for this gene is
+                    currently not available.
+                  </Text>
+                </View>
+              </View>
+            : <View>
+                <View style={styles.title}>
+                  <Text style={styles.innerTitle}>{this.props.gene}</Text>
+                </View>
+                <View style={styles.infoPlaceholder}>
+                  <ActivityIndicatorIOS size="large" />
+                </View>
+              </View>
+          }
+          <Button
+            onPress={() => { this.props.onClose(); }}
+            style={styles.modalButton}>
+            <Text style={styles.buttonText}>Close</Text>
+          </Button>
+        </View>
       </View>
     );
   },
   _renderInfo: function(infoObj) {
     var rowTitle = infoObj.title || '';
-    var rowContent = infoObj.content instanceof Array
-    ? infoObj.content.join(', ')
-    : infoObj.content;
+    var rowContent = infoObj.content;
     return (
       <View>
         { rowContent.length
           ? <View style={styles.row}>
               <Text style={[styles.innerRow, styles.bold]}>{rowTitle}</Text>
-              <Text style={styles.innerRow}>{rowContent}</Text>
+              { infoObj.containsUrl
+                ? <Text
+                    style={[styles.innerRow, styles.url]}
+                    onPress={() => LinkingIOS.openURL(rowContent)}>
+                    {rowContent}
+                  </Text>
+                : <Text style={styles.innerRow}>{rowContent}</Text>
+              }
             </View>
           : <View></View>
         }
       </View>
     );
   },
-  _getGeneInfo: function() {
+  _getGeneInfo: function(inputGene) {
     var _this = this;
     var geneApi = 'http://amp.pharm.mssm.edu/Harmonizome/api/1.0/gene/' +
-      this.props.gene + '?min=true';
+      inputGene + '?min=true';
     fetch(geneApi)
       .then((response) => response.json())
       .then((resp) => {
         var info = [
           {
             title: 'Synonyms',
-            content: resp.synonyms || [],
+            content: resp.synonyms.join(',') || '',
           },
           {
             title: 'Full Name',
@@ -158,7 +140,12 @@ var GeneModal = React.createClass({
           },
           {
             title: 'NCBI Entrez Gene ID',
-            content: resp.ncbiEntrezGeneId || '',
+            content: resp.ncbiEntrezGeneId.toString() || '',
+          },
+          {
+            title: 'NCBI Entrez Gene URL',
+            content: resp.ncbiEntrezGeneUrl || '',
+            containsUrl: true,
           }
         ];
         if (resp.status !== 404) {
@@ -181,7 +168,9 @@ var GeneModal = React.createClass({
   }
 });
 
-var LISTVIEW_HEIGHT = 300;
+var MODAL_PADDING = 20;
+var LISTVIEW_HEIGHT = windowDim.height - MODAL_PADDING * 12;
+var LISTVIEW_WIDTH = windowDim.width - MODAL_PADDING * 3;
 
 var styles = StyleSheet.create({
   bold: {
@@ -193,16 +182,23 @@ var styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
+    position: 'absolute',
+    height: windowDim.height,
+    width: windowDim.width,
+    top: 0,
+    left: 0,
+    padding: MODAL_PADDING,
   },
   innerContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: 10,
   },
   innerTitle: {
     fontFamily: fontFamily,
     fontSize: 18,
     textAlign: 'center',
+    marginBottom: 5,
   },
   innerRow: {
     fontSize: 14,
@@ -210,12 +206,16 @@ var styles = StyleSheet.create({
   },
   listView: {
     height: LISTVIEW_HEIGHT,
+    width: LISTVIEW_WIDTH,
   },
   modalButton: {
-    backgroundColor: colorSecondary,
+    width: LISTVIEW_WIDTH,
+    backgroundColor: colorTeal,
     marginTop: 10,
   },
   row: {
+    marginLeft: 10,
+    marginRight: 10,
     borderBottomWidth: 1 / PixelRatio.get(),
     borderColor: colorLightGray,
     paddingTop: 5,
@@ -224,16 +224,22 @@ var styles = StyleSheet.create({
   infoPlaceholder: {
     alignItems: 'center',
     height: LISTVIEW_HEIGHT,
+    width: LISTVIEW_WIDTH,
+    marginLeft: 10,
     justifyContent: 'center',
   },
   text: {
     fontFamily: fontFamily,
   },
   title: {
+    width: windowDim.width - MODAL_PADDING * 2,
     borderBottomWidth: 1,
     borderColor: colorGray,
     paddingBottom: 10,
   },
+  url: {
+    color: colorUrl,
+  }
 });
 
 module.exports = GeneModal;

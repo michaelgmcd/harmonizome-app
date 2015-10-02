@@ -1,13 +1,18 @@
 var React = require('react-native');
 var StyleVars = require('./StyleVars');
 var {
+  colorBackground,
+  colorBorderBottom,
+  colorBorderSide,
+  colorBorderTop,
   colorLightGray,
   colorGray,
-  colorBackground,
+  colorUrl,
   fontFamily,
 } = StyleVars;
 
 var {
+  LinkingIOS,
   ListView,
   PixelRatio,
   StyleSheet,
@@ -17,47 +22,37 @@ var {
 
 var LibraryResults = React.createClass({
   propTypes: {
-    results: React.PropTypes.array
+    terms: React.PropTypes.array
   },
   getInitialState: function() {
     return {
-      resultsDataSrc: new ListView.DataSource({
+      termsDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
       }),
     };
   },
   componentWillMount: function() {
     this.setState({
-      resultsDataSrc: this.state.resultsDataSrc.cloneWithRows(this.props.results)
+      termsDataSrc: this.state.termsDataSrc.cloneWithRows(this.props.terms)
     });
   },
   render: function() {
     return (
       <ListView
-        dataSource={this.state.resultsDataSrc}
-        renderRow={this.renderResults}
+        dataSource={this.state.termsDataSrc}
+        renderRow={this.renderTerms}
         style={styles.listView}
         automaticallyAdjustContentInsets={false}
       />
     );
   },
-  renderResults: function(libObj) {
+  renderTerms: function(term) {
     return (
       <View style={styles.rowWrapper}>
         <View style={styles.rowInner}>
           <Text style={styles.libraryTitle}>
-            {libObj.name}
+            {term}
           </Text>
-          <Text style={styles.libraryFormat}>
-            Description: {libObj.format}
-          </Text>
-          {
-            libObj.genes.map(function(gene, index) {
-              return (
-                <Text key={index} style={styles.gene}>{gene}</Text>
-              );
-            })
-          }
         </View>
       </View>
     );
@@ -66,38 +61,39 @@ var LibraryResults = React.createClass({
 
 var styles = StyleSheet.create({
   listView: {
+    backgroundColor: colorBackground,
     flex: 10,
-    backgroundColor: colorLightGray,
+    paddingLeft: 10,
+    paddingRight: 10,
   },
   rowWrapper: {
-    paddingLeft: 5,
-    paddingRight: 5,
-    marginTop: 5,
+    marginTop: 10,
   },
   rowInner: {
     flexDirection: 'column',
-    borderWidth: 1 / PixelRatio.get(),
-    borderColor: colorGray,
+    borderWidth: 1,
+    borderRadius: 3,
+    borderColor: colorBorderSide,
+    borderTopColor: colorBorderTop,
+    borderBottomColor: colorBorderBottom,
     flex: 1,
     backgroundColor: 'white',
-    paddingTop: 10,
-    paddingBottom: 10,
+    padding: 10,
   },
   libraryTitle: {
     flex: 1,
+    paddingLeft: 10,
+    fontSize: 16,
     fontWeight: 'bold',
     fontFamily: fontFamily,
   },
-  libraryType: {
-
-  },
-  libraryFormat: {
-
-  },
   gene: {
+    fontSize: 13,
     fontFamily: fontFamily,
-    paddingLeft: 20,
   },
+  url: {
+    color: colorUrl,
+  }
 });
 
 module.exports = LibraryResults;

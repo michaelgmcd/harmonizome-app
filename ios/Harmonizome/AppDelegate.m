@@ -9,7 +9,7 @@
   NSURL *jsCodeLocation;
 
   /**
-   * Loading JavaScript code - uncomment the one you want.
+   * Loading JavaScript code - /Users/mmcdermottuncomment the one you want.
    *
    * OPTION 1
    * Load from development server. Start the server from the repository root:
@@ -22,7 +22,7 @@
    * on the same Wi-Fi network.
    */
 
-  jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle"];
+//  jsCodeLocation = [NSURL URLWithString:@"http://localhost:8081/index.ios.bundle?platform=ios"];
 
   /**
    * OPTION 2
@@ -34,7 +34,7 @@
    * see http://facebook.github.io/react-native/docs/runningondevice.html
    */
 
-//  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"Harmonizome"

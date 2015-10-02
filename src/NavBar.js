@@ -10,18 +10,19 @@ var {
 } = React;
 var StyleVars = require('./StyleVars');
 var {
+  colorBorderBottom,
   colorPrimary,
-  colorGray,
+  colorPrimaryDark,
   fontFamily,
 } = StyleVars;
 
 var {Icon,} = require('react-native-icons');
-var GeneModal = require('./GeneModal');
 
 var NavBar = React.createClass({
   propTypes: {
     gene: React.PropTypes.string,
     category: React.PropTypes.string,
+    library: React.PropTypes.string,
     onBack: React.PropTypes.func,
   },
   getInitialState: function() {
@@ -30,47 +31,55 @@ var NavBar = React.createClass({
     };
   },
   _setModalVisible: function(visible) {
-    this.setState({modalVisible: visible});
+    this.props.navigator.replace(
+      Object.assign(
+        {},
+        this.props.route,
+        {
+          passProps: {
+            ...this.props.route.passProps,
+            useLastResult: true,
+          },
+          gene: this.props.gene,
+          modalVisible: visible
+        }
+      )
+    );
   },
   render: function() {
     return (
       <View>
-        <GeneModal
-          gene={this.props.gene}
-          modalVisible={this.state.modalVisible}
-          onClose={() => { this._setModalVisible(false); }}
-        />
         <View style={styles.navContainer}>
-          <TouchableOpacity onPress={() => { this.props.onBack(); }}>
+          <TouchableOpacity onPress={() => { this.props.navigator.pop(); }}>
             <Image
-              source={require('image!nav-back')}
+              source={require('image!nav_back_white')}
               resizeMode={'contain'}
               style={styles.navBtn}
             />
           </TouchableOpacity>
           <View style={styles.navMiddle}>
             {
-              !!this.props.category ?
-                <View>
+              !!this.props.category && !!this.props.library
+              ? <View>
+                  <Text style={styles.navTitleWithSub}>{this.props.gene}</Text>
+                  <Text style={styles.navSubTitle}>
+                    {this.props.category} | {this.props.libary}
+                  </Text>
+                </View>
+              : !!this.props.category
+              ? <View>
                   <Text style={styles.navTitleWithSub}>{this.props.gene}</Text>
                   <Text style={styles.navSubTitle}>{this.props.category}</Text>
                 </View>
-              :
-                <Text style={styles.navTitle}>{this.props.gene}</Text>
+              : <Text style={styles.navTitle}>{this.props.gene}</Text>
             }
           </View>
           <TouchableOpacity onPress={() => { this._setModalVisible(true); }}>
-            <Icon
-              name='fontawesome|circle-thin'
-              size={28}
-              color={colorPrimary}
-              style={styles.infoOutline}>
-              <Icon
-                name='fontawesome|info'
-                size={16}
-                color={colorPrimary}
-                style={styles.infoInner}/>
-            </Icon>
+            <Image
+              source={require('image!nav_info')}
+              resizeMode={'contain'}
+              style={styles.navBtn}
+            />
           </TouchableOpacity>
         </View>
       </View>
@@ -80,8 +89,9 @@ var NavBar = React.createClass({
 
 var styles = StyleSheet.create({
   navContainer: {
-    borderBottomWidth: 1 / PixelRatio.get(),
-    borderBottomColor: colorGray,
+    backgroundColor: colorPrimary,
+    borderBottomWidth: 1,
+    borderBottomColor: colorPrimaryDark,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 40,
@@ -90,37 +100,27 @@ var styles = StyleSheet.create({
     paddingRight: 10,
   },
   navTitle: {
+    marginTop: 2,
     fontSize: 20,
     fontFamily: fontFamily,
-    color: colorPrimary,
+    color: 'white',
     textAlign: 'center',
   },
   navTitleWithSub: {
     fontSize: 18,
     fontFamily: fontFamily,
-    color: colorPrimary,
+    color: 'white',
     textAlign: 'center',
   },
   navSubTitle: {
     fontSize: 14,
     fontFamily: fontFamily,
-    color: colorPrimary,
+    color: 'white',
     textAlign: 'center',
   },
   navBtn: {
-    height: 24,
-    width: 32,
-  },
-  infoInner: {
-    flex: 1,
-    height: 16,
-    width: 16,
-  },
-  infoOutline: {
-    flexDirection: 'column',
     height: 28,
-    width: 28,
-    alignItems: 'center',
+    width: 32,
   },
 });
 

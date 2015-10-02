@@ -1,5 +1,6 @@
 var React = require('react-native');
 var Home = require('./Home');
+var GeneModal = require('./GeneModal');
 var Styles = require('./StyleVars');
 var {colorPrimary} = Styles;
 
@@ -9,28 +10,31 @@ var {
   View,
 } = React;
 
+
 var router = React.createClass({
-  getInitialState: function() {
-    return {
-      navHidden: true
-    };
-  },
   render: function() {
     var _this = this;
     return (
       <Navigator
-        style={styles.homeNav}
+        style={styles.nav}
         initialRoute={{
           name: 'Home',
           component: Home
         }}
-        renderScene={this.renderScene}
+        configureScene={this._configureScene}
+        renderScene={this._renderScene}
       />
     );
   },
-  renderScene: function(route, navigator) {
+  _configureScene: function(route) {
+    return route.configureScene
+    ? route.configureScene
+    : Navigator.SceneConfigs.FloatFromRight;
+  },
+  _renderScene: function(route, navigator) {
     var Component = route.component;
     var navBar = route.navigationBar;
+    var modal = route.modal;
     var props = route.passProps;
 
     if (navBar) {
@@ -43,13 +47,35 @@ var router = React.createClass({
       <View style={{ flex: 1, }}>
         {navBar}
         <Component {...props} navigator={navigator} route={route} />
+        { route.modalVisible
+          ? <GeneModal
+              gene={route.gene}
+              onClose={() => {
+
+                navigator.replace(
+                  Object.assign(
+                    {},
+                    route,
+                    {
+                      passProps: {
+                        ...props,
+                        useLastResult: true,
+                      },
+                      modalVisible: false
+                    }
+                  )
+                );
+              }}
+            />
+          : null
+        }
       </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
-  homeNav: {
+  nav: {
     flex: 1,
     borderBottomWidth: 0
   }

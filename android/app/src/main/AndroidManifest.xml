@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gene">
+    package="com.harmonizome">
 
     <uses-permission android:name="android.permission.INTERNET" />
 

@@ -7,6 +7,9 @@ var NavBar = require('./NavBar');
 var StyleVars = require('./StyleVars');
 
 var {
+  colorBorderSide,
+  colorBorderTop,
+  colorBorderBottom,
   colorPrimary,
   colorPrimaryDark,
   colorBackground,
@@ -38,7 +41,7 @@ var home = React.createClass({
         { this.state.atHome ?
             <View style={styles.titleContainer}>
               <Image
-                source={require('image!logo-lg')}
+                source={require('image!logo_lg')}
                 resizeMode={'contain'}
                 style={styles.titleIcon}
               />
@@ -55,6 +58,7 @@ var home = React.createClass({
             { backgroundColor: this.state.atHome ? colorBackground : 'white' },
             { borderWidth: this.state.atHome ? 0 : 1 },
             { flex: this.state.atHome ? 1 : 0 },
+            { alignItems: this.state.atHome ? 'flex-start' : 'center' },
             { shadowOpacity: this.state.atHome ? 0 : .8 },
           ]}>
           <TextInput
@@ -73,7 +77,7 @@ var home = React.createClass({
               });
             }}
             onSubmitEditing={() => {
-              this._goToResults(this.state.input);
+              this._goToCategories(this.state.input);
             }}
             value={this.state.input}
             placeholder={'Enter Entrez gene symbol, e.g. STAT3...'}
@@ -98,7 +102,7 @@ var home = React.createClass({
             <AutoComplete
               input={this.state.input}
               onSelect={(selectedGene) => {
-                this._goToResults(selectedGene);
+                this._goToCategories(selectedGene);
               }}
             />
           :
@@ -107,7 +111,7 @@ var home = React.createClass({
       </View>
     );
   },
-  _goToResults: function(inputGene) {
+  _goToCategories: function(inputGene) {
     var _this = this;
     this.props.navigator.push({
       name: 'CategoryList',
@@ -116,9 +120,6 @@ var home = React.createClass({
       navigationBar: (
         <NavBar
           gene={inputGene}
-          onBack={() => {
-            _this.props.navigator.popToTop();
-          }}
         />
       )
     });
@@ -159,9 +160,10 @@ var styles = StyleSheet.create({
     marginBottom: 10,
   },
   searchContainer: {
-    borderColor: colorGray,
+    borderColor: colorBorderSide,
+    borderTopColor: colorBorderTop,
+    borderBottomColor: colorBorderBottom,
     flexDirection: 'row',
-    alignItems: 'center',
     marginLeft: 15,
     marginRight: 15,
     height: 50,

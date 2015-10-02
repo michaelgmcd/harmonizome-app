@@ -3,6 +3,8 @@ var {Icon,} = require('react-native-icons');
 var recentSearches = require('./recentSearches');
 var StyleVars = require('./StyleVars');
 var {
+  colorBorderSide,
+  colorOrange,
   colorPrimary,
   colorPrimaryDark,
   colorBackground,
@@ -21,8 +23,6 @@ var {
   View,
 } = React;
 
-var ALL_GENES = [];
-
 var AutoComplete = React.createClass({
   propTypes: {
     input: React.PropTypes.string,
@@ -30,6 +30,7 @@ var AutoComplete = React.createClass({
   },
   getInitialState: function() {
     return {
+      networkError: false,
       autocompleteOptions: [],
       geneDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
@@ -37,35 +38,46 @@ var AutoComplete = React.createClass({
     };
   },
   componentWillReceiveProps: function(newProps) {
-    // Check to make sure genes have been loaded initially first
-    if (ALL_GENES.length) {
-      this.matchGenes(newProps.input);
-    }
+    this._matchGenes(newProps.input);
   },
-  componentDidMount: function() {
-    var _this = this;
-    this.findGenes(function(response) {
-      ALL_GENES = response;
-      _this.matchGenes(_this.props.input);
-    });
+  componentWillMount: function() {
+    this._matchGenes(this.props.input);
   },
   render: function() {
-    var numOpts = this.state.autocompleteOptions.length;
-    return (
-      <View
-        style={[
+    var _this = this;
+    var numOpts = this.state.networkError
+      ? 1
+      : this.state.autocompleteOptions.length;
+    if (this.state.networkError) {
+      return (
+        <View style={styles.listViewContainer}>
+          <TouchableHighlight
+            onPress={() => this._matchGenes(this.props.input)}
+            style={styles.rowWrapper}>
+            <View style={styles.rowInner}>
+              <Text style={[styles.option, styles.error]}>
+                You are not connected to the internet.
+                <Text style={styles.bold}> Try again?</Text>
+              </Text>
+            </View>
+          </TouchableHighlight>
+        </View>
+      );
+    } else {
+      return (
+        <View style={[
           styles.listViewContainer,
-          { height: numOpts > 4 ? 5 * 45.25 : numOpts * 45.25 },
-        ]}>
-        <ListView
-          dataSource={this.state.geDataSrc}
-          renderRow={this.renderGenes}
-          automaticallyAdjustContentInsets={false}
-        />
-      </View>
-    );
+          { height: numOpts > 4 ? 5 * 45 : numOpts * 45 }]}>
+          <ListView
+            dataSource={this.state.geneDataSrc}
+            renderRow={this._renderGenes}
+            automaticallyAdjustContentInsets={false}
+          />
+        </View>
+      );
+    }
   },
-  renderGenes: function(geneObj) {
+  _renderGenes: function(geneObj) {
     // Make matched section of string bold by spliting it.
     // Don't need to worry about invalid input here because input is already
     // checked when geneObj is generated
@@ -119,18 +131,10 @@ var AutoComplete = React.createClass({
       </TouchableHighlight>
     );
   },
-  findGenes: function(callback) {
+  _matchGenes: function(input) {
+    var _this = this;
     var reqApi = 'http://amp.pharm.mssm.edu/Enrichr/json/' +
       'genemap.json?_=1442798351897';
-    fetch(reqApi)
-      .then((response) => response.json())
-      .then((resp) => callback(resp))
-      .catch((err) => {
-        console.log(err);
-      })
-      .done();
-  },
-  matchGenes: function(input) {
     var inpRegEx;
     try {
       inpRegEx = new RegExp(input, 'i');
@@ -138,7 +142,7 @@ var AutoComplete = React.createClass({
       console.log(e);
     }
     var acOptions = [];
-    var names = []
+    var names = [];
     var recent = recentSearches.getSearches();
     // Iterate backwards to get most recent searches first
     for (var i = recent.length; i === 0, i--;) {
@@ -153,35 +157,59 @@ var AutoComplete = React.createClass({
         names.push(recent[i]);
       }
     }
-    ALL_GENES.forEach(function(gene) {
-      // If gene matches input, input is not empty, there are no more than 6
-      // options already, and gene is not already an option (recent search)
-      if (inpRegEx.test(gene) && input.length && acOptions.length < 6 &&
-        names.indexOf(gene) === -1) {
-        var option = {
-          option: gene,
-          recent: false,
-        };
-        acOptions.push(option);
-      }
-    });
-    console.log(acOptions);
-    this.setState({
-      autocompleteOptions: acOptions,
-      geneDataSrc: this.state.geneDataSrc.cloneWithRows(acOptions)
-    });
+    fetch(reqApi)
+      .then((response) => response.json())
+      .then((genes) => {
+        var maxResults = 6;
+        for (var i = 0; i < genes.length; i++) {
+          var gene = genes[i];
+          // If gene matches input, input is not empty, there are no more than 6
+          // options already, and gene is not already an option (recent search)
+          if (inpRegEx.test(gene) && input.length && names.indexOf(gene) === -1) {
+            var option = {
+              option: gene,
+              recent: false,
+            };
+            acOptions.push(option);
+          }
+          // Break if maxResults reached
+          if (acOptions.length === maxResults) {
+            break;
+          }
+        }
+        _this.setState({
+          networkError: false,
+          autocompleteOptions: acOptions,
+          geneDataSrc: _this.state.geneDataSrc.cloneWithRows(acOptions)
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        _this.setState({
+          networkError: true,
+          autocompleteOptions: acOptions,
+          geneDataSrc: _this.state.geneDataSrc.cloneWithRows(acOptions)
+        });
+      })
+      .done();
   }
 
 });
 
 var styles = StyleSheet.create({
+  bold: {
+    fontWeight: 'bold',
+  },
+  error: {
+    color: colorOrange,
+  },
   listViewContainer: {
     backgroundColor: 'white',
     marginLeft: 15,
     marginRight: 15,
     borderLeftWidth: 1,
     borderRightWidth: 1,
-    borderColor: colorGray,
+    borderColor: colorBorderSide,
     shadowColor: colorDarkGray,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: .8,
@@ -208,12 +236,11 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: 'white',
+    padding: 15,
     paddingTop: 10,
     paddingBottom: 10,
   },
   rowWrapper: {
-    marginLeft: 15,
-    marginRight: 15,
   },
   searchIcon: {
     textAlign: 'right',

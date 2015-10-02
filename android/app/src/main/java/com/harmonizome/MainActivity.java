@@ -1,4 +1,4 @@
-package com.gene;
+package com.harmonizome;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import com.facebook.react.ReactRootView;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
+import com.smixx.reactnativeicons.ReactNativeIcons;
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
@@ -26,11 +27,12 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModuleName("index.android")
                 .addPackage(new MainReactPackage())
+                .addPackage(new ReactNativeIcons())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
 
-        mReactRootView.startReactApplication(mReactInstanceManager, "gene", null);
+        mReactRootView.startReactApplication(mReactInstanceManager, "harmonizome", null);
 
         setContentView(mReactRootView);
     }
@@ -42,6 +44,15 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
             return true;
         }
         return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
+    public void onBackPressed() {
+      if (mReactInstanceManager != null) {
+        mReactInstanceManager.onBackPressed();
+      } else {
+        super.onBackPressed();
+      }
     }
 
     @Override
