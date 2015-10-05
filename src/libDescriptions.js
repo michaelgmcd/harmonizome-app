@@ -1,7 +1,7 @@
 module.exports = {
   'ChEA': 'ChEA contains results from transcription factor ChIP-seq studies extracted from supporting materials of publications. Each entry has the transcription factor, PMID, cell type and organism. A peak at the promoter of gene {0} was detected in each study.',
   'TRANSFAC_and_JASPAR_PWMs': 'Using the PWM from TRANSFAC and JASPAR the binding motifs were detected at the promoter of gene {0}.',
-  'Genome_Browser_PWMs': 'Using a published list from the UCSC Genome Browser gene {0} was associated with these binding motifs.',
+  'Genome_Browser_PWMs': 'Using a published list from the UCSC Genome Browser, gene {0} was associated with these binding motifs.',
   'Epigenomics_Roadmap_HM_ChIP-seq': 'Processed ChIP-seq data from the Epigenomics Roadmap project to associate detected peaks near genes.',
   'TargetScan_microRNA': 'Computationally predicted targets for microRNAs.',
   'ENCODE_TF_ChIP-seq_2015': 'Processed ChIP-seq data from the ENCODE project to associate detected peaks near genes.',

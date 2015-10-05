@@ -20,6 +20,7 @@ var {Icon,} = require('react-native-icons');
 
 var NavBar = React.createClass({
   propTypes: {
+    hideInfoBtn: React.PropTypes.bool,
     gene: React.PropTypes.string,
     category: React.PropTypes.string,
     library: React.PropTypes.string,
@@ -46,41 +47,68 @@ var NavBar = React.createClass({
       )
     );
   },
+  _formatText: function(text) {
+    if (text && text.length > 16) {
+      return text.substring(0, 16) + '...';
+    } else if (text) {
+      return text;
+    } else {
+      return false;
+    }
+  },
   render: function() {
+    var backBtn;
+    var backBtnStyle;
+    if (this.props.useXBtn) {
+      backBtn = require('image!nav_x_white');
+      backBtnStyle = styles.navX;
+    } else {
+      backBtn = require('image!nav_back_white');
+      backBtnStyle = styles.navBtn;
+    }
+    var category = this._formatText(this.props.category) || '';
+    var library = this._formatText(this.props.library) || '';
     return (
       <View>
         <View style={styles.navContainer}>
           <TouchableOpacity onPress={() => { this.props.navigator.pop(); }}>
             <Image
-              source={require('image!nav_back_white')}
+              source={backBtn}
               resizeMode={'contain'}
-              style={styles.navBtn}
+              style={backBtnStyle}
             />
           </TouchableOpacity>
           <View style={styles.navMiddle}>
             {
-              !!this.props.category && !!this.props.library
-              ? <View>
+              !!category && !!library
+              ? <View style={styles.center}>
                   <Text style={styles.navTitleWithSub}>{this.props.gene}</Text>
                   <Text style={styles.navSubTitle}>
-                    {this.props.category} | {this.props.libary}
+                    {category + ' | ' + library}
                   </Text>
                 </View>
-              : !!this.props.category
-              ? <View>
+              : !!category
+              ? <View style={styles.center}>
                   <Text style={styles.navTitleWithSub}>{this.props.gene}</Text>
-                  <Text style={styles.navSubTitle}>{this.props.category}</Text>
+                  <Text style={styles.navSubTitle}>{category}</Text>
+                </View>
+              : !!library
+              ? <View style={styles.center}>
+                  <Text style={styles.navTitle}>{library}</Text>
                 </View>
               : <Text style={styles.navTitle}>{this.props.gene}</Text>
             }
           </View>
-          <TouchableOpacity onPress={() => { this._setModalVisible(true); }}>
-            <Image
-              source={require('image!nav_info')}
-              resizeMode={'contain'}
-              style={styles.navBtn}
-            />
-          </TouchableOpacity>
+          { this.props.hideInfoBtn
+            ? <View style={styles.navBtn}></View>
+            : <TouchableOpacity onPress={() => { this._setModalVisible(true); }}>
+                <Image
+                  source={require('image!nav_info')}
+                  resizeMode={'contain'}
+                  style={styles.navBtn}
+                />
+              </TouchableOpacity>
+          }
         </View>
       </View>
     );
@@ -88,6 +116,11 @@ var NavBar = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   navContainer: {
     backgroundColor: colorPrimary,
     borderBottomWidth: 1,
@@ -99,24 +132,33 @@ var styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
   },
+  navMiddle: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   navTitle: {
+    flex: 1,
     marginTop: 2,
     fontSize: 20,
     fontFamily: fontFamily,
     color: 'white',
-    textAlign: 'center',
   },
   navTitleWithSub: {
+    flex: 1,
     fontSize: 18,
     fontFamily: fontFamily,
     color: 'white',
-    textAlign: 'center',
   },
   navSubTitle: {
+    flex: 1,
     fontSize: 14,
     fontFamily: fontFamily,
     color: 'white',
-    textAlign: 'center',
+  },
+  navX: {
+    height: 24,
+    width: 24,
   },
   navBtn: {
     height: 28,

@@ -3,7 +3,7 @@
   [
     {
       "path": ".",
-      "folder_exclude_patterns": [],
+      "folder_exclude_patterns": ["node_modules", "ios", "android"],
       "file_exclude_patterns": ["npm-debug.log", ".tern-port"]
     }
   ]

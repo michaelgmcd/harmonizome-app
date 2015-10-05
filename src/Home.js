@@ -28,7 +28,7 @@ var {
   View,
 } = React;
 
-var home = React.createClass({
+var Home = React.createClass({
   getInitialState: function() {
     return {
       input: '',
@@ -157,6 +157,7 @@ var styles = StyleSheet.create({
   },
   titleIcon: {
     width: 100,
+    height: 100,
     marginBottom: 10,
   },
   searchContainer: {
@@ -182,4 +183,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = home;
+module.exports = Home;

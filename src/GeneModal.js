@@ -1,9 +1,11 @@
 var React = require('react-native');
+var WebV = require('./WebView');
+var NavBar = require('./NavBar');
 var {
   ActivityIndicatorIOS,
   Dimensions,
-  LinkingIOS,
   ListView,
+  Navigator,
   PixelRatio,
   StyleSheet,
   Text,
@@ -107,7 +109,7 @@ var GeneModal = React.createClass({
               { infoObj.containsUrl
                 ? <Text
                     style={[styles.innerRow, styles.url]}
-                    onPress={() => LinkingIOS.openURL(rowContent)}>
+                    onPress={() => this._goToUrl(rowContent)}>
                     {rowContent}
                   </Text>
                 : <Text style={styles.innerRow}>{rowContent}</Text>
@@ -118,6 +120,21 @@ var GeneModal = React.createClass({
       </View>
     );
   },
+  _goToUrl: function(ncbiUrl) {
+    this.props.navigator.push({
+      name: 'NCBI View',
+      component: WebV,
+      configureScene: Navigator.SceneConfigs.FloatFromBottom,
+      passProps: { url: ncbiUrl },
+      navigationBar: (
+        <NavBar
+          useXBtn={true}
+          hideInfoBtn={true}
+          library={'NCBI Entrez Gene'}
+        />
+      )
+    });
+  },
   _getGeneInfo: function(inputGene) {
     var _this = this;
     var geneApi = 'http://amp.pharm.mssm.edu/Harmonizome/api/1.0/gene/' +
@@ -125,10 +142,14 @@ var GeneModal = React.createClass({
     fetch(geneApi)
       .then((response) => response.json())
       .then((resp) => {
+        var synonyms;
+        if (resp.synonyms) {
+          synonyms = resp.synonyms.join(', ');
+        }
         var info = [
           {
             title: 'Synonyms',
-            content: resp.synonyms.join(',') || '',
+            content: synonyms || '',
           },
           {
             title: 'Full Name',

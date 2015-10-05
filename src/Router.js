@@ -49,6 +49,7 @@ var router = React.createClass({
         <Component {...props} navigator={navigator} route={route} />
         { route.modalVisible
           ? <GeneModal
+              navigator={navigator}
               gene={route.gene}
               onClose={() => {
 

@@ -112,7 +112,11 @@ var Results = React.createClass({
     this.props.navigator.push({
       name: 'Library List',
       component: LibraryList,
-      passProps: categoryObj,
+      passProps: {
+        gene: this.props.gene,
+        categoryName: categoryObj.type,
+        libraries: categoryObj.libraries,
+      },
       navigationBar: (
         <NavBar
           gene={this.props.gene}

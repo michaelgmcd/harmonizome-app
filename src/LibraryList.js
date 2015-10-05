@@ -1,4 +1,5 @@
 var React = require('react-native');
+var WebV = require('./WebView');
 var NavBar = require('./NavBar');
 var TermList = require('./TermList');
 var StyleVars = require('./StyleVars');
@@ -7,6 +8,7 @@ var {
   colorBorderBottom,
   colorBorderSide,
   colorBorderTop,
+  colorDarkGray,
   colorLightGray,
   colorGray,
   colorUrl,
@@ -15,6 +17,7 @@ var {
 
 var {
   ListView,
+  Navigator,
   PixelRatio,
   StyleSheet,
   View,
@@ -29,33 +32,22 @@ var LibraryResults = React.createClass({
     libraries: React.PropTypes.array,
   },
   getInitialState: function() {
+    var libs = [{ text: 'Select a library to view its related terms'}];
+    libs.push.apply(libs, this.props.libraries);
     return {
-      url: '',
-      showWebView: false,
       libraryDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
-      }).cloneWithRows(this.props.libraries),
+      }).cloneWithRows(libs),
     };
   },
   render: function() {
     return (
-      <View>
-        { this.state.showWebView && this.state.url.length
-          ? <WebView
-              automaticallyAdjustContentInsets={false}
-              style={styles.webView}
-              url={this.state.url}
-              javaScriptEnabledAndroid={true}
-              startInLoadingState={true}
-            />
-          : <ListView
-              dataSource={this.state.libraryDataSrc}
-              renderRow={this._renderLibrary}
-              style={styles.listView}
-              automaticallyAdjustContentInsets={false}
-            />
-        }
-      </View>
+      <ListView
+        dataSource={this.state.libraryDataSrc}
+        renderRow={this._renderLibrary}
+        style={styles.listView}
+        automaticallyAdjustContentInsets={false}
+      />
     );
   },
   _goToTerms: function(libObj) {
@@ -72,36 +64,53 @@ var LibraryResults = React.createClass({
       )
     });
   },
-  _goToUrl: function(url) {
-    this.setState({
-      url: url,
-      showWebView: true,
+  _goToUrl: function(libName, libUrl) {
+    this.props.navigator.push({
+      name: 'Library View',
+      component: WebV,
+      configureScene: Navigator.SceneConfigs.FloatFromBottom,
+      passProps: { url: libUrl },
+      navigationBar: (
+        <NavBar
+          useXBtn={true}
+          hideInfoBtn={true}
+          library={libName}
+        />
+      )
     });
   },
   _renderLibrary: function(libObj) {
     return (
       <View style={styles.rowWrapper}>
-        <TouchableHighlight onPress={() => this._goToTerms(libObj)}>
-          <View style={styles.rowInner}>
-            <Text style={styles.libraryTitle}>
-              {libObj.name}
-            </Text>
-            <Text>
-              Description: {libObj.format}
-            </Text>
-            <Text
-              style={styles.url}
-              onPress={() => this._goToUrl(libObj.link)}>
-              {libObj.link}
-            </Text>
-          </View>
-        </TouchableHighlight>
+        { !!libObj.text && libObj.text.length
+          ? <Text style={styles.libText}>{libObj.text}</Text>
+          : <TouchableHighlight onPress={() => this._goToTerms(libObj)}>
+              <View style={styles.rowInner}>
+                <Text style={styles.libraryTitle}>
+                  {libObj.name}
+                </Text>
+                <Text style={styles.libraryDesc}>
+                  {libObj.description}
+                </Text>
+                <Text
+                  style={styles.url}
+                  onPress={() => this._goToUrl(libObj.name, libObj.link)}>
+                  {libObj.link}
+                </Text>
+              </View>
+            </TouchableHighlight>
+        }
       </View>
     );
   }
 });
 
 var styles = StyleSheet.create({
+  libText: {
+    fontFamily: fontFamily,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
   listView: {
     backgroundColor: colorBackground,
     flex: 10,
@@ -109,7 +118,7 @@ var styles = StyleSheet.create({
     paddingRight: 10,
   },
   rowWrapper: {
-    marginTop: 10,
+    marginTop: 8,
   },
   rowInner: {
     flexDirection: 'column',
@@ -121,6 +130,11 @@ var styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     padding: 10,
+  },
+  libraryDesc: {
+    paddingTop: 10,
+    paddingBottom: 10,
+    fontFamily: fontFamily,
   },
   libraryTitle: {
     flex: 1,
@@ -134,6 +148,7 @@ var styles = StyleSheet.create({
     fontFamily: fontFamily,
   },
   url: {
+    fontFamily: fontFamily,
     color: colorUrl,
   }
 });
