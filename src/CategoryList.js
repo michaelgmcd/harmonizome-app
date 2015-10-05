@@ -1,7 +1,9 @@
 var React = require('react-native');
+var libDescriptions = require('./libDescriptions');
 var LibraryList = require('./LibraryList');
 var NavBar = require('./NavBar');
 var StyleVars = require('./StyleVars');
+
 var {
   colorBackground,
   colorBorderTop,
@@ -130,7 +132,6 @@ var Results = React.createClass({
         fetch(termsUrl)
           .then((tResponse) => tResponse.json())
           .then((termsResp) => {
-            console.log(datasets);
             // Transform response object to array of objects with keys as values in
             // object
             var data = [];
@@ -144,12 +145,11 @@ var Results = React.createClass({
                   if (termsResp.gene.hasOwnProperty(libraryName)) {
                     if (categoryObj.name === libraryName) {
                       var name = libraryName.replace(/_/g, ' ');
-                      var format = categoryObj.format
-                        .replace(/\{1\}/, 'each of the following')
+                      var description = libDescriptions[libraryName]
                         .replace(/\{0\}/, _this.props.gene);
                       categoryObj.name = name;
                       categoryObj.terms = termsResp.gene[libraryName];
-                      categoryObj.format = format;
+                      categoryObj.description = description;
                       // Iterate over all libraries from datasets endpoint until
                       // name matches and add the link to categoryObj
                       for (var i = 0; i < datasets.statistics.length; i++) {
