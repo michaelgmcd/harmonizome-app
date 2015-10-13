@@ -32,3 +32,7 @@ npm-debug.log
 
 # TernJS
 .tern-port
+
+# Android Release
+*.apk
+*.keystore

@@ -34,6 +34,7 @@ var GeneModal = React.createClass({
   },
   getInitialState: function() {
     return {
+      networkError: false,
       resultsLoaded: false,
       resultsFound: true,
       geneModalDataSrc: new ListView.DataSource({
@@ -56,7 +57,18 @@ var GeneModal = React.createClass({
     return (
       <View style={[styles.container, modalBackgroundStyle]}>
         <View style={[styles.innerContainer, tranparentStyle]}>
-          { this.state.resultsLoaded && this.state.resultsFound
+          { this.state.networkError
+            ? <View>
+                <View style={styles.title}>
+                  <Text style={styles.innerTitle}>{this.props.gene}</Text>
+                </View>
+                <View style={styles.infoPlaceholder}>
+                  <Text style={styles.text}>
+                    Network is not available. Please reconnect and try again.
+                  </Text>
+                </View>
+              </View>
+            : this.state.resultsLoaded && this.state.resultsFound
             ? <View>
                 <View style={styles.title}>
                   <Text style={styles.innerTitle}>{this.state.geneSymbol}</Text>
@@ -146,6 +158,10 @@ var GeneModal = React.createClass({
         if (resp.synonyms) {
           synonyms = resp.synonyms.join(', ');
         }
+        var entrezId;
+        if (resp.ncbiEntrezGeneId) {
+          entrezId = resp.ncbiEntrezGeneId.toString();
+        }
         var info = [
           {
             title: 'Synonyms',
@@ -161,7 +177,7 @@ var GeneModal = React.createClass({
           },
           {
             title: 'NCBI Entrez Gene ID',
-            content: resp.ncbiEntrezGeneId.toString() || '',
+            content: entrezId || '',
           },
           {
             title: 'NCBI Entrez Gene URL',
@@ -183,12 +199,16 @@ var GeneModal = React.createClass({
         }
       })
       .catch((err) => {
-        console.log(err);
+        _this.setState({
+          resultsLoaded: true,
+          networkError: true,
+        });
       })
       .done();
   }
 });
 
+var MODAL_PADDING_TOP = 40;
 var MODAL_PADDING = 20;
 var LISTVIEW_HEIGHT = windowDim.height - MODAL_PADDING * 12;
 var LISTVIEW_WIDTH = windowDim.width - MODAL_PADDING * 3;
@@ -209,6 +229,7 @@ var styles = StyleSheet.create({
     top: 0,
     left: 0,
     padding: MODAL_PADDING,
+    paddingTop: MODAL_PADDING_TOP,
   },
   innerContainer: {
     alignItems: 'center',
@@ -259,6 +280,7 @@ var styles = StyleSheet.create({
     paddingBottom: 10,
   },
   url: {
+    fontFamily: fontFamily,
     color: colorUrl,
   }
 });

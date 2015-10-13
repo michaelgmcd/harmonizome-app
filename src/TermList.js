@@ -1,7 +1,9 @@
 var React = require('react-native');
 var WebV = require('./WebView');
 var NavBar = require('./NavBar');
+var libInfo = require('./libInfo');
 var StyleVars = require('./StyleVars');
+
 var {
   colorBackground,
   colorBorderBottom,
@@ -14,7 +16,6 @@ var {
 } = StyleVars;
 
 var {
-  LinkingIOS,
   ListView,
   Navigator,
   PixelRatio,
@@ -25,6 +26,7 @@ var {
 
 var LibraryResults = React.createClass({
   propTypes: {
+    library: React.PropTypes.string,
     terms: React.PropTypes.array
   },
   getInitialState: function() {
@@ -51,34 +53,53 @@ var LibraryResults = React.createClass({
     );
   },
   renderTerms: function(term) {
-    var pmIdRegEx = /(\b\d{7,8}\b)/g;
-    var pmId = term.match(pmIdRegEx);
-    var termWithId = term.split(pmIdRegEx);
+    var idRegEx = /(\b\d{7,8}\b)/g;
+    var geoRegEx = /G[DS][EMS]\d{4,7}/;
+    var dsId = term.match(idRegEx);
+    var geoAccession = term.match(geoRegEx);
+    var idName = libInfo[this.props.library].idName;
+    var baseUrl = libInfo[this.props.library].baseUrl;
     return (
       <View style={styles.rowWrapper}>
         <View style={styles.rowInner}>
-          <Text style={styles.libraryTitle}>{term}</Text>
-          { pmId
-            ? <View>
-                <Text>{'PubMed ID: ' + pmId}</Text>
+          <Text style={styles.termTitle}>{term}</Text>
+          { geoAccession
+            ? <Text>
+                <Text>Geo Accession Number: </Text>
                 <Text
                   style={styles.url}
-                  onPress={() => this._goToPubMed(pmId)}>
-                  {'Visit PubMed'}
+                  onPress={() => {
+                    var geoUrl = 'http://www.ncbi.nlm.nih.gov/sites/' +
+                      'GDSbrowser?acc=' + geoAccession;
+                    this._goToUrl(geoUrl);
+                  }}>
+                  {geoAccession}
                 </Text>
-              </View>
+              </Text>
+            : dsId && idName.length && baseUrl.length
+            ? <Text>
+                <Text>{idName}: </Text>
+                <Text
+                  style={styles.url}
+                  onPress={() => {
+                    var dsUrl = baseUrl + dsId;
+                    this._goToUrl(dsUrl);
+                  }}>
+                  {dsId}
+                </Text>
+              </Text>
             : null
           }
         </View>
       </View>
     );
   },
-  _goToPubMed: function(pmId) {
+  _goToUrl: function(url) {
     this.props.navigator.push({
       name: 'Term View',
       component: WebV,
       configureScene: Navigator.SceneConfigs.FloatFromBottom,
-      passProps: { url: 'http://www.ncbi.nlm.nih.gov/pubmed/?term=' + pmId },
+      passProps: { url: url },
       navigationBar: (
         <NavBar
           useXBtn={true}
@@ -97,7 +118,7 @@ var styles = StyleSheet.create({
     paddingRight: 10,
   },
   rowWrapper: {
-    marginTop: 10,
+    marginTop: 5,
   },
   rowInner: {
     flexDirection: 'column',
@@ -110,10 +131,9 @@ var styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 10,
   },
-  libraryTitle: {
+  termTitle: {
     flex: 1,
-    paddingLeft: 10,
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     fontFamily: fontFamily,
   },
@@ -122,6 +142,7 @@ var styles = StyleSheet.create({
     fontFamily: fontFamily,
   },
   url: {
+    paddingTop: 8,
     fontFamily: fontFamily,
     color: colorUrl,
   },

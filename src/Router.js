@@ -10,7 +10,6 @@ var {
   View,
 } = React;
 
-
 var router = React.createClass({
   render: function() {
     var _this = this;
@@ -35,7 +34,7 @@ var router = React.createClass({
     var Component = route.component;
     var navBar = route.navigationBar;
     var modal = route.modal;
-    var props = route.passProps;
+    var routeProps = route.passProps;
 
     if (navBar) {
       navBar = React.addons.cloneWithProps(navBar, {
@@ -43,10 +42,20 @@ var router = React.createClass({
       });
     }
 
+    if (this.props.os === 'android' && routeProps && routeProps.url) {
+      var webIntent = require('react-native-webintent');
+      return webIntent.open(routeProps.url);
+    }
+
     return (
       <View style={{ flex: 1, }}>
         {navBar}
-        <Component {...props} navigator={navigator} route={route} />
+        <Component
+          {...routeProps}
+          os={this.props.os}
+          navigator={navigator}
+          route={route}
+        />
         { route.modalVisible
           ? <GeneModal
               navigator={navigator}
@@ -59,7 +68,7 @@ var router = React.createClass({
                     route,
                     {
                       passProps: {
-                        ...props,
+                        ...routeProps,
                         useLastResult: true,
                       },
                       modalVisible: false

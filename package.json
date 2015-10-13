@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "react-native": "^0.12.0-rc",
-    "react-native-icons": "^0.5.0-rc"
+    "react-native-icons": "^0.5.0-rc",
+    "react-native-webintent": "^1.0.2"
   }
 }

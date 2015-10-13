@@ -1,5 +1,5 @@
 var React = require('react-native');
-var libDescriptions = require('./libDescriptions');
+var libInfo = require('./libInfo');
 var LibraryList = require('./LibraryList');
 var NavBar = require('./NavBar');
 var StyleVars = require('./StyleVars');
@@ -16,6 +16,7 @@ var {
 } = StyleVars;
 
 var {
+  Dimensions,
   Image,
   ListView,
   PixelRatio,
@@ -28,6 +29,8 @@ var {
 } = React;
 
 var lastResult = [];
+var windowDim = Dimensions.get('window');
+var smallHeight = windowDim.width < 325;
 
 var Results = React.createClass({
   propTypes: {
@@ -127,61 +130,45 @@ var Results = React.createClass({
   },
   _getGSLibraries: function(inputGene) {
     var _this = this;
-    var datasetsUrl = 'http://amp.pharm.mssm.edu/Enrichr/datasetStatistics';
+    // var datasetsUrl = 'http://amp.pharm.mssm.edu/Enrichr/datasetStatistics';
     var termsUrl = 'http://amp.pharm.mssm.edu/Enrichr/genemap?gene=' +
       inputGene + '&setup=true&json=true&_=1442611548980';
-    fetch(datasetsUrl)
-      .then((dsResponse) => dsResponse.json())
-      .then((datasets) => {
-        fetch(termsUrl)
-          .then((tResponse) => tResponse.json())
-          .then((termsResp) => {
-            // Transform response object to array of objects with keys as values in
-            // object
-            var data = [];
-            termsResp.categories.forEach(function(catObj) {
-              var newLib = {
-                type: catObj.name,
-                libraries: []
-              };
-              catObj.libraries.forEach(function(categoryObj) {
-                for (var libraryName in termsResp.gene) {
-                  if (termsResp.gene.hasOwnProperty(libraryName)) {
-                    if (categoryObj.name === libraryName) {
-                      var name = libraryName.replace(/_/g, ' ');
-                      var description = libDescriptions[libraryName]
-                        .replace(/\{0\}/, _this.props.gene);
-                      categoryObj.name = name;
-                      categoryObj.terms = termsResp.gene[libraryName];
-                      categoryObj.description = description;
-                      // Iterate over all libraries from datasets endpoint until
-                      // name matches and add the link to categoryObj
-                      for (var i = 0; i < datasets.statistics.length; i++) {
-                        var dataset = datasets.statistics[i];
-                        if (dataset.libraryName === libraryName) {
-                          categoryObj.link = dataset.link;
-                          break;
-                        }
-                      }
-                      newLib.libraries.push(categoryObj);
-                    }
-                  }
+    fetch(termsUrl)
+      .then((tResponse) => tResponse.json())
+      .then((termsResp) => {
+        // Transform response object to array of objects with keys as values in
+        // object
+        var data = [];
+        termsResp.categories.forEach(function(catObj) {
+          var newLib = {
+            type: catObj.name,
+            libraries: []
+          };
+          catObj.libraries.forEach(function(categoryObj) {
+            for (var libraryName in termsResp.gene) {
+              if (termsResp.gene.hasOwnProperty(libraryName)) {
+                if (categoryObj.name === libraryName) {
+                  var name = libraryName.replace(/_/g, ' ');
+                  var description = libInfo[name]
+                    .description
+                    .replace(/\{0\}/, _this.props.gene);
+                  categoryObj.name = name;
+                  categoryObj.terms = termsResp.gene[libraryName];
+                  categoryObj.description = description;
+                  newLib.libraries.push(categoryObj);
                 }
-              });
-              if (newLib.libraries.length) {
-                data.push(newLib);
               }
-            });
-            lastResult = data;
-            _this.setState({
-              networkError: false,
-              categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(data)
-            });
-          })
-          .catch((err) => {
-            _this.setState({ networkError: true });
-          })
-          .done();
+            }
+          });
+          if (newLib.libraries.length) {
+            data.push(newLib);
+          }
+        });
+        lastResult = data;
+        _this.setState({
+          networkError: false,
+          categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(data)
+        });
       })
       .catch((err) => {
         _this.setState({ networkError: true });
@@ -191,13 +178,13 @@ var Results = React.createClass({
 });
 
 var styles = StyleSheet.create({
-  hazardIcon: {
-    height: 82,
-    width: 120,
-  },
   bold: {
     fontFamily: fontFamily,
     fontWeight: 'bold',
+  },
+  errorIcon: {
+    height: 42,
+    width: 60,
   },
   errorWrapper: {
     flex: 1,
@@ -247,7 +234,7 @@ var styles = StyleSheet.create({
   rowWrapper: {
     marginTop: 5,
     height: 155,
-    width: 175,
+    width: (windowDim.width - 11) / 2,
     marginBottom: 10,
   },
   rowInner: {
@@ -260,8 +247,8 @@ var styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'white',
-    padding: 20,
-    paddingBottom: 10,
+    padding: 10,
+    paddingTop: 20,
   }
 });
 

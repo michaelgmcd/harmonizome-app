@@ -1,6 +1,5 @@
 var React = require('react-native');
 var {
-  Modal,
   PixelRatio,
   StyleSheet,
   Text,

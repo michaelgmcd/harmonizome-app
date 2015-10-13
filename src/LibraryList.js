@@ -16,13 +16,14 @@ var {
 } = StyleVars;
 
 var {
+  Image,
   ListView,
   Navigator,
   PixelRatio,
   StyleSheet,
   View,
   Text,
-  TouchableHighlight,
+  TouchableOpacity,
   WebView,
 } = React;
 
@@ -54,7 +55,7 @@ var LibraryResults = React.createClass({
     this.props.navigator.push({
       name: 'Term List',
       component: TermList,
-      passProps: { terms: libObj.terms },
+      passProps: { terms: libObj.terms, library: libObj.name },
       navigationBar: (
         <NavBar
           gene={this.props.gene}
@@ -84,21 +85,25 @@ var LibraryResults = React.createClass({
       <View style={styles.rowWrapper}>
         { !!libObj.text && libObj.text.length
           ? <Text style={styles.libText}>{libObj.text}</Text>
-          : <TouchableHighlight onPress={() => this._goToTerms(libObj)}>
-              <View style={styles.rowInner}>
+          : <View style={styles.rowInner}>
+              <View style={styles.rowInfo}>
                 <Text style={styles.libraryTitle}>
                   {libObj.name}
                 </Text>
                 <Text style={styles.libraryDesc}>
                   {libObj.description}
                 </Text>
-                <Text
-                  style={styles.url}
-                  onPress={() => this._goToUrl(libObj.name, libObj.link)}>
-                  {libObj.link}
-                </Text>
               </View>
-            </TouchableHighlight>
+              <TouchableOpacity
+                style={styles.rowNav}
+                onPress={() => this._goToTerms(libObj)}>
+                <Image
+                  source={require('image!nav_forward')}
+                  resizeMode={'contain'}
+                  style={{height: 80, width: 20}}
+                />
+              </TouchableOpacity>
+            </View>
         }
       </View>
     );
@@ -118,16 +123,23 @@ var styles = StyleSheet.create({
     paddingRight: 10,
   },
   rowWrapper: {
+    flex: 1,
+    flexDirection: 'row',
     marginTop: 8,
   },
-  rowInner: {
+  rowInfo: {
     flexDirection: 'column',
+    flex: 4,
+  },
+  rowInner: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
     borderWidth: 1,
     borderRadius: 3,
     borderColor: colorBorderSide,
     borderTopColor: colorBorderTop,
     borderBottomColor: colorBorderBottom,
-    flex: 1,
     backgroundColor: 'white',
     padding: 10,
   },
@@ -146,6 +158,11 @@ var styles = StyleSheet.create({
   gene: {
     fontSize: 13,
     fontFamily: fontFamily,
+  },
+  rowNav: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   url: {
     fontFamily: fontFamily,

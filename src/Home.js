@@ -17,16 +17,21 @@ var {
   colorDarkGray,
   colorLightGray,
   fontFamily,
-  titleFont,
+  titleFontIOS,
+  titleFontAndroid,
 } = StyleVars;
 
 var {
+  Dimensions,
   Image,
   StyleSheet,
   Text,
   TextInput,
   View,
 } = React;
+
+var windowDim = Dimensions.get('window');
+var smallScreen = windowDim.height < 500;
 
 var Home = React.createClass({
   getInitialState: function() {
@@ -45,7 +50,12 @@ var Home = React.createClass({
                 resizeMode={'contain'}
                 style={styles.titleIcon}
               />
-              <Text style={styles.title}>
+              <Text style={[
+                styles.title,
+                { fontFamily: this.props.os === 'ios'
+                  ? titleFontIOS
+                  : titleFontAndroid}
+              ]}>
                 Harmonizome
               </Text>
             </View>
@@ -62,23 +72,29 @@ var Home = React.createClass({
             { shadowOpacity: this.state.atHome ? 0 : .8 },
           ]}>
           <TextInput
-            autoCapitalize={'none'}
+            ref="geneSearchBar"
+            autoCapitalize="none"
             autoCorrect={false}
-            clearButtonMode={'always'}
-            returnKeyType={'search'}
+            clearButtonMode="always"
+            returnKeyType="done"
             style={[
               styles.searchBar,
               { shadowOpacity: this.state.atHome ? .8 : 0 },
             ]}
+            onFocus={() => {
+              if (smallScreen) {
+                this.setState({
+                  atHome: false,
+                });
+              }
+            }}
             onChangeText={(input) => {
               this.setState({
                 atHome: false,
                 input: input,
               });
             }}
-            onSubmitEditing={() => {
-              this._goToCategories(this.state.input);
-            }}
+            onSubmitEditing={() => {}}
             value={this.state.input}
             placeholder={'Enter Entrez gene symbol, e.g. STAT3...'}
           />
@@ -112,7 +128,7 @@ var Home = React.createClass({
     );
   },
   _goToCategories: function(inputGene) {
-    var _this = this;
+    this.refs.geneSearchBar.blur();
     this.props.navigator.push({
       name: 'CategoryList',
       component: CategoryList,
@@ -151,7 +167,6 @@ var styles = StyleSheet.create({
   },
   title: {
     color: colorPrimary,
-    fontFamily: titleFont,
     fontSize: 36,
     textAlign: 'center',
   },

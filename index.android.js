@@ -7,9 +7,9 @@ var {AppRegistry,} = React;
 var Harmonizome = React.createClass({
   render: function() {
     return (
-      <Router />
+      <Router os="android" />
     );
   }
 });
 
-AppRegistry.registerComponent('harmonizome', () => Harmonizome);
+AppRegistry.registerComponent('Harmonizome', () => Harmonizome);

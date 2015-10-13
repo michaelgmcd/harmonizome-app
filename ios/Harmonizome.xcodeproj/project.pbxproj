@@ -377,7 +377,7 @@
 				ORGANIZATIONNAME = MaayanLab;
 				TargetAttributes = {
 					640E94431BB9892F00E0FAEE = {
-						DevelopmentTeam = ZCWR59WJ47;
+						DevelopmentTeam = 9F7VGW3497;
 					};
 					640E945C1BB9893900E0FAEE = {
 						TestTargetID = 640E94431BB9892F00E0FAEE;
@@ -606,10 +606,10 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/harmonizome/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = org.maayanlab.harmonizome;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maayanlab.harmonizome;
 				PRODUCT_NAME = Harmonizome;
 				PROVISIONING_PROFILE = "";
 			};
@@ -628,10 +628,10 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/harmonizome/Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_BUNDLE_IDENTIFIER = org.maayanlab.harmonizome;
+				PRODUCT_BUNDLE_IDENTIFIER = com.maayanlab.harmonizome;
 				PRODUCT_NAME = Harmonizome;
 				PROVISIONING_PROFILE = "";
 			};
@@ -716,7 +716,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -756,7 +756,7 @@
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.2;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

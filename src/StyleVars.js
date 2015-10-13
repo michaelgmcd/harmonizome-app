@@ -19,5 +19,6 @@ module.exports = {
   colorPink: '#ED148F',
   colorUrl: '#3366BB',
   fontFamily: 'Helvetica Neue',
-  titleFont: 'Georgia'
+  titleFontAndroid: 'serif',
+  titleFontIOS: 'Georgia',
 };
