@@ -5,6 +5,7 @@ var Styles = require('./StyleVars');
 var {colorPrimary} = Styles;
 
 var {
+  BackAndroid,
   Navigator,
   StyleSheet,
   View,
@@ -31,6 +32,15 @@ var router = React.createClass({
     : Navigator.SceneConfigs.FloatFromRight;
   },
   _renderScene: function(route, navigator) {
+    if (this.props.os === 'android') {
+      BackAndroid.addEventListener('hardwareBackPress', function() {
+        if (route.name !== 'Home') {
+          navigator.pop();
+          return true;
+        }
+        return false;
+      });
+    }
     var Component = route.component;
     var navBar = route.navigationBar;
     var modal = route.modal;
