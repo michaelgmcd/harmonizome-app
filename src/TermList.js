@@ -54,7 +54,7 @@ var LibraryResults = React.createClass({
   },
   renderTerms: function(term) {
     var idRegEx = /(\b\d{7,8}\b)/g;
-    var geoRegEx = /G[DS][EMS]\d{4,7}/;
+    var geoRegEx = /[Gg][DdSs][EeMmSs]\d{3,7}/;
     var dsId = term.match(idRegEx);
     var geoAccession = term.match(geoRegEx);
     var idName = libInfo[this.props.library].idName;
@@ -73,7 +73,7 @@ var LibraryResults = React.createClass({
                       'GDSbrowser?acc=' + geoAccession;
                     this._goToUrl(geoUrl);
                   }}>
-                  {geoAccession}
+                  {geoAccession.toString().toUpperCase()}
                 </Text>
               </Text>
             : dsId && idName.length && baseUrl.length

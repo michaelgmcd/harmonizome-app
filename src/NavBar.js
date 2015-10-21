@@ -26,12 +26,12 @@ var NavBar = React.createClass({
     library: React.PropTypes.string,
     onBack: React.PropTypes.func,
   },
-  getInitialState: function() {
+  getInitialState() {
     return {
       modalVisible: false,
     };
   },
-  _setModalVisible: function(visible) {
+  _setModalVisible(visible) {
     this.props.navigator.replace(
       Object.assign(
         {},
@@ -47,7 +47,7 @@ var NavBar = React.createClass({
       )
     );
   },
-  _formatText: function(text) {
+  _formatText(text) {
     if (text && text.length > 16) {
       return text.substring(0, 16) + '...';
     } else if (text) {
@@ -56,7 +56,7 @@ var NavBar = React.createClass({
       return false;
     }
   },
-  render: function() {
+  render() {
     var backBtn;
     var backBtnStyle;
     if (this.props.useXBtn) {
@@ -157,12 +157,12 @@ var styles = StyleSheet.create({
     color: 'white',
   },
   navX: {
-    height: 24,
-    width: 24,
+    height: 20,
+    width: 20,
   },
   navBtn: {
-    height: 28,
-    width: 32,
+    height: 24.5,
+    width: 28,
   },
 });
 

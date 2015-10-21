@@ -31,8 +31,8 @@ module.exports = {
   },
   'TF-LOF Expression from GEO': {
     description: 'Gene expression signatures extracted from the GEO database for transcription factor perturbations.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'ENCODE Histone Modifications 2015': {
     description: 'Processed ChIP-seq data from the ENCODE project to associate detected peaks near genes.',
