@@ -251,8 +251,8 @@ module.exports = {
   },
   'ESCAPE': {
     description: 'Gene sets collected for the ESCAPE stem cell focused database.',
-    idName: '',
-    baseUrl: ''
+    idName: 'PubMed ID',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/pubmed/?term='
   },
   'Chromosome Location': {
     description: 'Chromosome segment location of human genes.',

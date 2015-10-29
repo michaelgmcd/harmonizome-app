@@ -24,6 +24,7 @@ var {
   View,
   Text,
   TouchableOpacity,
+  TouchableHighlight,
   WebView,
 } = React;
 
@@ -82,7 +83,9 @@ var LibraryResults = React.createClass({
   },
   _renderLibrary: function(libObj) {
     return (
-      <View style={styles.rowWrapper}>
+      <TouchableOpacity
+        style={styles.rowWrapper}
+        onPress={() => this._goToTerms(libObj)}>
         { !!libObj.text && libObj.text.length
           ? <Text style={styles.libText}>{libObj.text}</Text>
           : <View style={styles.rowInner}>
@@ -105,7 +108,7 @@ var LibraryResults = React.createClass({
               </TouchableOpacity>
             </View>
         }
-      </View>
+      </TouchableOpacity>
     );
   }
 });

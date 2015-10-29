@@ -60,59 +60,90 @@ var Home = React.createClass({
               </Text>
             </View>
           :
-            <View></View>
+            null
         }
-        <View
-          style={[
-            styles.searchContainer,
-            { backgroundColor: this.state.atHome ? colorBackground : 'white' },
-            { borderWidth: this.state.atHome ? 0 : 1 },
-            { flex: this.state.atHome ? 1 : 0 },
-            { alignItems: this.state.atHome ? 'flex-start' : 'center' },
-            { shadowOpacity: this.state.atHome ? 0 : .8 },
-          ]}>
-          <TextInput
-            ref="geneSearchBar"
-            autoCapitalize="none"
-            autoCorrect={false}
-            clearButtonMode="always"
-            returnKeyType="done"
+        <View style={[
+          styles.searchWrapper,
+          { flex: this.state.atHome ? 1 : 0 },
+          { justifyContent: this.state.atHome ? 'flex-start' : 'center' },
+        ]}>
+          <View
             style={[
-              styles.searchBar,
-              { shadowOpacity: this.state.atHome ? .8 : 0 },
-            ]}
-            onFocus={() => {
-              if (smallScreen) {
+              styles.searchContainer,
+              { backgroundColor: this.state.atHome ? colorBackground : 'white' },
+              { borderWidth: this.state.atHome ? 0 : 1 },
+              { alignItems: this.state.atHome ? 'flex-start' : 'center' },
+              { shadowOpacity: this.state.atHome ? 0 : .8 },
+            ]}>
+            <TextInput
+              ref="geneSearchBar"
+              autoCapitalize="none"
+              autoCorrect={false}
+              clearButtonMode="always"
+              returnKeyType="done"
+              style={[
+                styles.searchBar,
+                { shadowOpacity: this.state.atHome ? .8 : 0 },
+              ]}
+              onFocus={() => {
+                if (smallScreen) {
+                  this.setState({
+                    atHome: false,
+                  });
+                }
+              }}
+              onChangeText={(input) => {
                 this.setState({
                   atHome: false,
+                  input: input,
                 });
-              }
-            }}
-            onChangeText={(input) => {
-              this.setState({
-                atHome: false,
-                input: input,
-              });
-            }}
-            onSubmitEditing={() => {}}
-            value={this.state.input}
-            placeholder={'Enter Entrez gene symbol, e.g. STAT3...'}
-          />
-          { !this.state.atHome ?
-              <Text
-                onPress={() => {
-                  this.setState({
-                    atHome: true,
-                    input: '',
-                  });
-                }}
-                style={styles.cancel}
-              >
-                Cancel
+              }}
+              onSubmitEditing={() => {}}
+              value={this.state.input}
+              placeholder={'Enter Entrez gene symbol...'}
+            />
+            { !this.state.atHome ?
+                <Text
+                  onPress={() => {
+                    this.setState({
+                      atHome: true,
+                      input: '',
+                    });
+                  }}
+                  style={styles.cancel}
+                >
+                  Cancel
+                </Text>
+              :
+                <View style={styles.cancelPlaceholder}></View>
+            }
+          </View>
+          { this.state.atHome ?
+              <Text style={styles.examples}>
+                <Text>Examples: </Text>
+                <Text style={styles.exOption} onPress={() => {
+                  this._goToCategories('TP53');
+                }}>TP53</Text>
+                <Text>, </Text>
+                <Text style={styles.exOption} onPress={() => {
+                  this._goToCategories('STAT3');
+                }}>STAT3</Text>
+                <Text>, </Text>
+                <Text style={styles.exOption} onPress={() => {
+                  this._goToCategories('CREB1');
+                }}>CREB1</Text>
+                <Text>, </Text>
+                <Text style={styles.exOption} onPress={() => {
+                  this._goToCategories('MAPK3');
+                }}>MAPK3</Text>
+                <Text>, </Text>
+                <Text style={styles.exOption} onPress={() => {
+                  this._goToCategories('SRC');
+                }}>SRC</Text>
               </Text>
             :
-              <View style={styles.cancelPlaceholder}></View>
-          }
+              null
+            }
         </View>
         { !this.state.atHome ?
             <AutoComplete
@@ -122,7 +153,7 @@ var Home = React.createClass({
               }}
             />
           :
-            <View></View>
+            null
         }
       </View>
     );
@@ -144,6 +175,16 @@ var Home = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  examples: {
+    color: colorPrimary,
+    fontSize: 16,
+    fontFamily: fontFamily,
+    textAlign: 'center',
+    flex: 1,
+  },
+  exOption: {
+    fontWeight: 'bold',
+  },
   cancel: {
     color: colorPrimary,
     fontSize: 16,
@@ -174,6 +215,9 @@ var styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginBottom: 10,
+  },
+  searchWrapper: {
+    flexDirection: 'column',
   },
   searchContainer: {
     borderColor: colorBorderSide,
