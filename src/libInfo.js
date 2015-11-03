@@ -91,8 +91,8 @@ module.exports = {
   },
   'Kinase Perturbations from GEO': {
     description: 'Gene expression signatures extracted from the GEO database for kinase gene perturbations.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Kinase Perturbations from L1000': {
     description: 'Metabolic pathways from Kinase Perturbations from L1000.',
@@ -191,13 +191,13 @@ module.exports = {
   },
   'Virus Perturbations from GEO up': {
     description: 'Differentially expression genes before and after viral infection of mammalian cells.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Virus Perturbations from GEO down': {
     description: 'Differentially expression genes before and after viral infection of mammalian cells.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Achilles fitness increase': {
     description: 'Knockdown genes that increased cell viability of cancer cell lines from the Achillis project.',
@@ -326,18 +326,18 @@ module.exports = {
   },
   'Drug Perturbations from GEO 2014': {
     description: 'Legacy version of the drug perturbation extracted from GEO gene set library.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Disease Signatures from GEO up 2014': {
     description: 'Legacy version of the disease sigantures extracted from GEO down genes gene set library.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Disease Signatures from GEO down 2014': {
     description: 'Legacy version of the disease sigantures extracted from GEO up genes gene set library.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'ENCODE Histone Modifications 2013': {
     description: 'Legacy version of the ENCODE histome modifications gene set library.',
@@ -351,32 +351,32 @@ module.exports = {
   },
   'Disease Perturbations from GEO down': {
     description: 'Gene sets extarcted from GEO comparing normal vs. diseased tissues.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Disease Perturbations from GEO up': {
     description: 'Gene sets extarcted from GEO comparing normal vs. diseased tissues.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Drug Perturbations from GEO down': {
     description: 'Gene sets extarcted from GEO comparing cells before and after drug treatment.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Drug Perturbations from GEO up': {
     description: 'Gene sets extarcted from GEO comparing cells before and after drug treatment.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Single Gene Perturbations from GEO up': {
     description: 'Gene sets extarcted from GEO comparing cells before and after genetic manipulation of a single gene.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
   'Single Gene Perturbations from GEO down': {
     description: 'Gene sets extarcted from GEO comparing cells before and after genetic manipulation of a single gene.',
-    idName: '',
-    baseUrl: ''
+    idName: 'Accession Number',
+    baseUrl: 'http://www.ncbi.nlm.nih.gov/sites/GDSbrowser?acc='
   },
 };

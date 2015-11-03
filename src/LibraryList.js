@@ -56,7 +56,11 @@ var LibraryResults = React.createClass({
     this.props.navigator.push({
       name: 'Term List',
       component: TermList,
-      passProps: { terms: libObj.terms, library: libObj.name },
+      passProps: {
+        library: libObj.name,
+        libraryDesc: libObj.description,
+        terms: libObj.terms,
+      },
       navigationBar: (
         <NavBar
           gene={this.props.gene}

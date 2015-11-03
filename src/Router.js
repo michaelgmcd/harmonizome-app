@@ -11,7 +11,14 @@ var {
   View,
 } = React;
 
+var DEVICE_IS_ANDROID = false;
+
 var router = React.createClass({
+  componentWillMount: function() {
+    if (this.props.os === 'android') {
+      DEVICE_IS_ANDROID = true;
+    }
+  },
   render: function() {
     var _this = this;
     return (
@@ -32,7 +39,7 @@ var router = React.createClass({
     : Navigator.SceneConfigs.FloatFromRight;
   },
   _renderScene: function(route, navigator) {
-    if (this.props.os === 'android') {
+    if (DEVICE_IS_ANDROID) {
       BackAndroid.addEventListener('hardwareBackPress', function() {
         if (route.name !== 'Home') {
           navigator.pop();

@@ -27,20 +27,17 @@ var {
 var LibraryResults = React.createClass({
   propTypes: {
     library: React.PropTypes.string,
+    libraryDesc: React.PropTypes.string,
     terms: React.PropTypes.array
   },
   getInitialState: function() {
+    var terms = [{ libraryDesc: this.props.libraryDesc }];
+    terms.push.apply(terms, this.props.terms.sort());
     return {
       termsDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
-      }),
+      }).cloneWithRows(terms),
     };
-  },
-  componentWillMount: function() {
-    // var terms = [{ text: ''}]
-    this.setState({
-      termsDataSrc: this.state.termsDataSrc.cloneWithRows(this.props.terms)
-    });
   },
   render: function() {
     return (
@@ -53,10 +50,14 @@ var LibraryResults = React.createClass({
     );
   },
   renderTerms: function(term) {
+    if (!!term.libraryDesc && term.libraryDesc.length) {
+      return (
+        <Text style={styles.libraryDesc}>{term.libraryDesc}</Text>
+      );
+    }
     var idRegEx = /(\d{7,8})/g;
     var geoRegEx = /[Gg][DdSs][EeMmSs]\d{3,7}/;
     var dsId = term.match(idRegEx);
-    console.log(dsId);
     var geoAccession = term.match(geoRegEx);
     var idName = libInfo[this.props.library].idName;
     var baseUrl = libInfo[this.props.library].baseUrl;
@@ -112,6 +113,9 @@ var LibraryResults = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  libraryDesc: {
+    padding: 10,
+  },
   listView: {
     backgroundColor: colorBackground,
     flex: 10,
