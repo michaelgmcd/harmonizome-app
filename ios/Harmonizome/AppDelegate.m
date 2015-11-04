@@ -1,5 +1,4 @@
 #import "AppDelegate.h"
-
 #import "RCTRootView.h"
 
 @implementation AppDelegate
@@ -9,7 +8,7 @@
   NSURL *jsCodeLocation;
 
   /**
-   * Loading JavaScript code - /Users/mmcdermottuncomment the one you want.
+   * Loading JavaScript code - /Users/mmcdermott uncomment the one you want.
    *
    * OPTION 1
    * Load from development server. Start the server from the repository root:
@@ -37,9 +36,9 @@
 //  jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
-                                                      moduleName:@"Harmonizome"
+                                               moduleName:@"Harmonizome"
                                                initialProperties:nil
-                                                   launchOptions:launchOptions];
+                                               launchOptions:launchOptions];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   UIViewController *rootViewController = [[UIViewController alloc] init];
