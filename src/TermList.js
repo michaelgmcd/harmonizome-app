@@ -59,8 +59,10 @@ var LibraryResults = React.createClass({
     var geoRegEx = /[Gg][DdSs][EeMmSs]\d{3,7}/;
     var dsId = term.match(idRegEx);
     var geoAccession = term.match(geoRegEx);
-    var idName = libInfo[this.props.library].idName;
-    var baseUrl = libInfo[this.props.library].baseUrl;
+    var termInfo = libInfo[this.props.library];
+    var useTermName = termInfo.useTermName;
+    var idName = termInfo.idName;
+    var baseUrl = termInfo.baseUrl;
     return (
       <View style={styles.rowWrapper}>
         <View style={styles.rowInner}>
@@ -76,6 +78,18 @@ var LibraryResults = React.createClass({
                     this._goToUrl(geoUrl);
                   }}>
                   {geoAccession.toString().toUpperCase()}
+                </Text>
+              </Text>
+            : useTermName && idName.length && baseUrl.length
+            ? <Text>
+                <Text>{idName}: </Text>
+                <Text
+                  style={styles.url}
+                  onPress={() => {
+                    var dsUrl = baseUrl + term;
+                    this._goToUrl(dsUrl);
+                  }}>
+                  {term}
                 </Text>
               </Text>
             : dsId && idName.length && baseUrl.length

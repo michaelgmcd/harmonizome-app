@@ -16,6 +16,7 @@ var {
 } = StyleVars;
 
 var {
+  ActivityIndicatorIOS,
   Dimensions,
   Image,
   ListView,
@@ -40,6 +41,7 @@ var Results = React.createClass({
   getInitialState: function() {
     return {
       networkError: false,
+      resultsLoaded: false,
       categoryDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
       }),
@@ -48,6 +50,7 @@ var Results = React.createClass({
   componentWillMount: function() {
     if (this.props.useLastResult) {
       this.setState({
+        resultsLoaded: true,
         categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(lastResult)
       });
     } else {
@@ -57,7 +60,7 @@ var Results = React.createClass({
   render: function() {
     if (this.state.networkError) {
       return (
-        <View style={styles.errorWrapper}>
+        <View style={styles.centerWrapper}>
           <Image
             source={require('image!hazard')}
             resizeMode={'contain'}
@@ -69,6 +72,15 @@ var Results = React.createClass({
             onPress={() => { this._getGSLibraries(this.props.gene); }}>
             <Text style={styles.bold}>Try Again?</Text>
           </TouchableOpacity>
+        </View>
+      );
+    } else if (!this.state.resultsLoaded) {
+      return (
+        <View style={styles.centerWrapper}>
+          <ActivityIndicatorIOS
+            animating={true}
+            color='#808080'
+            size='large' />
         </View>
       );
     } else {
@@ -149,9 +161,14 @@ var Results = React.createClass({
               if (termsResp.gene.hasOwnProperty(libraryName)) {
                 if (categoryObj.name === libraryName) {
                   var name = libraryName.replace(/_/g, ' ');
-                  var description = libInfo[name]
-                    .description
-                    .replace(/\{0\}/, _this.props.gene);
+                  var description;
+                  try {
+                    description = libInfo[name]
+                      .description
+                      .replace(/\{0\}/, _this.props.gene);
+                  } catch (err) {
+                    description = 'Description not available.';
+                  }
                   categoryObj.name = name;
                   categoryObj.terms = termsResp.gene[libraryName];
                   categoryObj.description = description;
@@ -167,10 +184,12 @@ var Results = React.createClass({
         lastResult = data;
         _this.setState({
           networkError: false,
+          resultsLoaded: true,
           categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(data)
         });
       })
       .catch((err) => {
+        console.log(err);
         _this.setState({ networkError: true });
       })
       .done();
@@ -186,7 +205,7 @@ var styles = StyleSheet.create({
     height: 42,
     width: 60,
   },
-  errorWrapper: {
+  centerWrapper: {
     flex: 1,
     flexDirection: 'column',
     alignItems: 'center',

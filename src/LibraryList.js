@@ -90,11 +90,14 @@ var LibraryResults = React.createClass({
       <TouchableOpacity
         style={styles.rowWrapper}
         onPress={() => this._goToTerms(libObj)}>
-        { !!libObj.text && libObj.text.length
+        {!!libObj.text && libObj.text.length
           ? <Text style={styles.libText}>{libObj.text}</Text>
           : <View style={styles.rowInner}>
               <View style={styles.rowInfo}>
-                <Text style={styles.libraryTitle}>
+                <Text style={[
+                  styles.libraryTitle,
+                  { fontSize: libObj.name.length < 30 ? 16 : 15 },
+                ]}>
                   {libObj.name}
                 </Text>
                 <Text style={styles.libraryDesc}>
@@ -157,8 +160,6 @@ var styles = StyleSheet.create({
   },
   libraryTitle: {
     flex: 1,
-    paddingLeft: 10,
-    fontSize: 16,
     fontWeight: 'bold',
     fontFamily: fontFamily,
   },
