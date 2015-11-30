@@ -19,15 +19,15 @@
 		640E94511BB9892F00E0FAEE /* libRCTVibration.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302E41ABCB9EE00DB3ED1 /* libRCTVibration.a */; };
 		640E94521BB9892F00E0FAEE /* libRCTWebSocket.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 139FDEF41B06529B00C62182 /* libRCTWebSocket.a */; };
 		640E94541BB9892F00E0FAEE /* foundation-icons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 648902D01BB46C68006F24F0 /* foundation-icons.ttf */; };
-		6474579C1BB9944800B4010F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 647457961BB9944800B4010F /* AppDelegate.m */; settings = {ASSET_TAGS = (); }; };
-		6474579D1BB9944800B4010F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 647457971BB9944800B4010F /* LaunchScreen.xib */; settings = {ASSET_TAGS = (); }; };
-		6474579E1BB9944800B4010F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 647457991BB9944800B4010F /* Images.xcassets */; settings = {ASSET_TAGS = (); }; };
-		647457A01BB9944800B4010F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6474579B1BB9944800B4010F /* main.m */; settings = {ASSET_TAGS = (); }; };
-		647457A41BB994B700B4010F /* harmonizomeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 647457A21BB994B700B4010F /* harmonizomeTests.m */; settings = {ASSET_TAGS = (); }; };
-		647457A51BB994B700B4010F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 647457A31BB994B700B4010F /* Info.plist */; settings = {ASSET_TAGS = (); }; };
-		64AC4B591BBB00240036957D /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 64AC4B581BBB00240036957D /* main.jsbundle */; settings = {ASSET_TAGS = (); }; };
+		6474579C1BB9944800B4010F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 647457961BB9944800B4010F /* AppDelegate.m */; };
+		6474579D1BB9944800B4010F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 647457971BB9944800B4010F /* LaunchScreen.xib */; };
+		6474579E1BB9944800B4010F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 647457991BB9944800B4010F /* Images.xcassets */; };
+		647457A01BB9944800B4010F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6474579B1BB9944800B4010F /* main.m */; };
+		647457A41BB994B700B4010F /* harmonizomeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 647457A21BB994B700B4010F /* harmonizomeTests.m */; };
+		647457A51BB994B700B4010F /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 647457A31BB994B700B4010F /* Info.plist */; };
+		64AC4B591BBB00240036957D /* main.jsbundle in Resources */ = {isa = PBXBuildFile; fileRef = 64AC4B581BBB00240036957D /* main.jsbundle */; };
 		64CA52331BB9B68000A0DE25 /* Georgia.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 64CA52321BB9B61700A0DE25 /* Georgia.ttf */; };
-		64CA52391BB9C2B400A0DE25 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 64CA52381BB9C2B400A0DE25 /* FontAwesome.otf */; settings = {ASSET_TAGS = (); }; };
+		64CA52391BB9C2B400A0DE25 /* FontAwesome.otf in Resources */ = {isa = PBXBuildFile; fileRef = 64CA52381BB9C2B400A0DE25 /* FontAwesome.otf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */

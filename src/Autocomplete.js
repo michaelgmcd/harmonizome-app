@@ -25,12 +25,13 @@ var {
 
 var AutoComplete = React.createClass({
   propTypes: {
-    input: React.PropTypes.string,
+    input: React.PropTypes.string.isRequired,
     onSelect: React.PropTypes.func
   },
   getInitialState: function() {
     return {
       networkError: false,
+      inputValid: true,
       autocompleteOptions: [],
       geneDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
@@ -81,7 +82,14 @@ var AutoComplete = React.createClass({
     // Make matched section of string bold by spliting it.
     // Don't need to worry about invalid input here because input is already
     // checked when geneObj is generated
-    var inpRegEx = new RegExp(this.props.input, 'i');
+    // Escape all '.'s and '\'s
+    var input = this.props.input.replace(/\./g, '\\\.').replace('\\', '\\\\');
+    var inpRegEx;
+    try {
+      inpRegEx = new RegExp(input, 'i');
+    } catch (e) {
+      return null;
+    }
     var options = geneObj.option.split(inpRegEx);
     var matchExists = options.length === 2 && (!!options[0] || !!options[1]);
     var perfectMatch = options.length === 2 && !options[0] && !options[1];
@@ -97,7 +105,7 @@ var AutoComplete = React.createClass({
                   {options[0]}
                 </Text>
                 <Text style={styles.subOptionHighlight}>
-                  {this.props.input.toUpperCase()}
+                  {input.toUpperCase()}
                 </Text>
                 <Text style={styles.subOption}>
                   {options[1]}
@@ -106,7 +114,7 @@ var AutoComplete = React.createClass({
             : perfectMatch
             ? <Text style={styles.option}>
                 <Text style={styles.subOptionHighlight}>
-                  {this.props.input.toUpperCase()}
+                  {input.toUpperCase()}
                 </Text>
               </Text>
             : <Text style={styles.option}>
@@ -131,15 +139,17 @@ var AutoComplete = React.createClass({
       </TouchableHighlight>
     );
   },
-  _matchGenes: function(input) {
+  _matchGenes: function(inp) {
+    // Escape all '.'s and '\'s
+    var input = inp.replace(/\./g, '\\\.').replace('\\', '\\\\');
     var _this = this;
-    var reqApi = 'http://amp.pharm.mssm.edu/Enrichr/json/' +
-      'genemap.json?_=1442798351897';
+    var reqApi = 'http://amp.pharm.mssm.edu/ha-libraries/genes';
     var inpRegEx;
     try {
       inpRegEx = new RegExp(input, 'i');
     } catch(e) {
       console.log(e);
+      return [];
     }
     var acOptions = [];
     var names = [];

@@ -31,11 +31,11 @@ var {
 var LibraryResults = React.createClass({
   propTypes: {
     categoryName: React.PropTypes.string,
-    libraries: React.PropTypes.array,
+    categoryObj: React.PropTypes.object,
   },
   getInitialState: function() {
     var libs = [{ text: 'Select a library to view its related terms'}];
-    libs.push.apply(libs, this.props.libraries);
+    libs.push.apply(libs, this.props.categoryObj.libraries);
     return {
       libraryDataSrc: new ListView.DataSource({
         rowHasChanged: (row1, row2) => row1 !== row2
@@ -57,14 +57,17 @@ var LibraryResults = React.createClass({
       name: 'Term List',
       component: TermList,
       passProps: {
-        library: libObj.name,
-        libraryDesc: libObj.description,
         terms: libObj.terms,
+        libraryName: libObj.name,
+        idName: libObj.idName,
+        baseUrl: libObj.baseUrl,
+        useTermName: libObj.useTermName,
+        libraryDesc: libObj.description,
       },
       navigationBar: (
         <NavBar
           gene={this.props.gene}
-          category={this.props.categoryName}
+          category={this.props.categoryObj.name}
           library={libObj.name}
         />
       )

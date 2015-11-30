@@ -26,7 +26,10 @@ var {
 
 var LibraryResults = React.createClass({
   propTypes: {
-    library: React.PropTypes.string,
+    libraryName: React.PropTypes.string,
+    idName: React.PropTypes.string,
+    baseUrl: React.PropTypes.string,
+    useTermName: React.PropTypes.bool,
     libraryDesc: React.PropTypes.string,
     terms: React.PropTypes.array
   },
@@ -50,19 +53,24 @@ var LibraryResults = React.createClass({
     );
   },
   renderTerms: function(term) {
-    if (!!term.libraryDesc && term.libraryDesc.length) {
+    if (!!term.libraryDesc || term.libraryDesc === '') {
       return (
         <Text style={styles.libraryDesc}>{term.libraryDesc}</Text>
       );
     }
-    var idRegEx = /(\d{7,8})/g;
-    var geoRegEx = /[Gg][DdSs][EeMmSs]\d{3,7}/;
-    var dsId = term.match(idRegEx);
-    var geoAccession = term.match(geoRegEx);
-    var termInfo = libInfo[this.props.library];
-    var useTermName = termInfo.useTermName;
-    var idName = termInfo.idName;
-    var baseUrl = termInfo.baseUrl;
+    var _this = this;
+    try {
+      var idRegEx = /(\d{7,8})/g;
+      var geoRegEx = /[Gg][DdSs][EeMmSs]\d{3,7}/;
+      var dsId = term.match(idRegEx);
+      var geoAccession = term.match(geoRegEx);
+      var useTermName = this.props.useTermName || false;
+      var idName = this.props.idName || '';
+      var baseUrl = this.props.baseUrl || '';
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
     return (
       <View style={styles.rowWrapper}>
         <View style={styles.rowInner}>

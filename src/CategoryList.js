@@ -129,8 +129,7 @@ var Results = React.createClass({
       component: LibraryList,
       passProps: {
         gene: this.props.gene,
-        categoryName: categoryObj.type,
-        libraries: categoryObj.libraries,
+        categoryObj: categoryObj
       },
       navigationBar: (
         <NavBar
@@ -142,50 +141,16 @@ var Results = React.createClass({
   },
   _getGSLibraries: function(inputGene) {
     var _this = this;
-    // var datasetsUrl = 'http://amp.pharm.mssm.edu/Enrichr/datasetStatistics';
-    var termsUrl = 'http://amp.pharm.mssm.edu/Enrichr/genemap?gene=' +
-      inputGene + '&setup=true&json=true&_=1442611548980';
+    var termsUrl = 'http://amp.pharm.mssm.edu/ha-libraries/results?' +
+      'gene=' + inputGene;
     fetch(termsUrl)
       .then((tResponse) => tResponse.json())
-      .then((termsResp) => {
-        // Transform response object to array of objects with keys as values in
-        // object
-        var data = [];
-        termsResp.categories.forEach(function(catObj) {
-          var newLib = {
-            type: catObj.name,
-            libraries: []
-          };
-          catObj.libraries.forEach(function(categoryObj) {
-            for (var libraryName in termsResp.gene) {
-              if (termsResp.gene.hasOwnProperty(libraryName)) {
-                if (categoryObj.name === libraryName) {
-                  var name = libraryName.replace(/_/g, ' ');
-                  var description;
-                  try {
-                    description = libInfo[name]
-                      .description
-                      .replace(/\{0\}/, _this.props.gene);
-                  } catch (err) {
-                    description = 'Description not available.';
-                  }
-                  categoryObj.name = name;
-                  categoryObj.terms = termsResp.gene[libraryName];
-                  categoryObj.description = description;
-                  newLib.libraries.push(categoryObj);
-                }
-              }
-            }
-          });
-          if (newLib.libraries.length) {
-            data.push(newLib);
-          }
-        });
-        lastResult = data;
+      .then((response) => {
+        lastResult = response;
         _this.setState({
           networkError: false,
           resultsLoaded: true,
-          categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(data)
+          categoryDataSrc: this.state.categoryDataSrc.cloneWithRows(response)
         });
       })
       .catch((err) => {

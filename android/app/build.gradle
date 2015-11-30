@@ -14,10 +14,19 @@ android {
             abiFilters "armeabi-v7a", "x86"
         }
     }
+    signingConfigs {
+        release {
+            storeFile file(HARMONIZOME_RELEASE_STORE_FILE)
+            storePassword HARMONIZOME_RELEASE_STORE_PASSWORD
+            keyAlias HARMONIZOME_RELEASE_KEY_ALIAS
+            keyPassword HARMONIZOME_RELEASE_KEY_PASSWORD
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
