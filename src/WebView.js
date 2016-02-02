@@ -1,12 +1,13 @@
 var React = require('react-native');
 
 var {
+  IntentAndroid,
   StyleSheet,
   WebView,
+  View,
 } = React;
 
 var WebV = React.createClass({
-
   render: function() {
     return (
       <WebView

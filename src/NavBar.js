@@ -1,5 +1,6 @@
 var React = require('react-native');
 var {
+  BackAndroid,
   Image,
   PixelRatio,
   StyleSheet,
@@ -18,6 +19,9 @@ var {
 
 var {Icon,} = require('react-native-icons');
 
+var routesWithListeners = [];
+var listenerAdded = false;
+
 var NavBar = React.createClass({
   propTypes: {
     hideInfoBtn: React.PropTypes.bool,
@@ -30,6 +34,33 @@ var NavBar = React.createClass({
     return {
       modalVisible: false,
     };
+  },
+  componentDidMount: function() {
+    if (this.props.os === 'android') {
+      // The listenerAdded variable ensures that only one event listener is added
+      // to the Android back button.
+      if (!listenerAdded) {
+        BackAndroid.addEventListener(this.props.route.name, () => {
+          // If there is more than one route in the stack, then pressing the back
+          // button should pop the navigator, otherwise, exit the app.
+          var currRoutes = this.props.navigator.getCurrentRoutes();
+          if (currRoutes.length > 1) {
+            this.props.navigator.pop();
+            return true;
+          }
+          return false;
+        });
+        routesWithListeners.push(this.props.route.name);
+        listenerAdded = true;
+      }
+    }
+  },
+  componentWillUnmount: function() {
+    if (routesWithListeners.length) {
+      routesWithListeners.forEach((routeName) => {
+        BackAndroid.removeEventListener(routeName);
+      });
+    }
   },
   _setModalVisible(visible) {
     this.props.navigator.replace(
@@ -50,11 +81,8 @@ var NavBar = React.createClass({
   _formatText(text) {
     if (text && text.length > 16) {
       return text.substring(0, 16) + '...';
-    } else if (text) {
-      return text;
-    } else {
-      return false;
     }
+    return text;
   },
   render() {
     var backBtn;

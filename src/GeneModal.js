@@ -4,6 +4,7 @@ var NavBar = require('./NavBar');
 var {
   ActivityIndicatorIOS,
   Dimensions,
+  IntentAndroid,
   ListView,
   Navigator,
   PixelRatio,
@@ -133,19 +134,28 @@ var GeneModal = React.createClass({
     );
   },
   _goToUrl: function(ncbiUrl) {
-    this.props.navigator.push({
-      name: 'NCBI View',
-      component: WebV,
-      configureScene: Navigator.SceneConfigs.FloatFromBottom,
-      passProps: { url: ncbiUrl },
-      navigationBar: (
-        <NavBar
-          useXBtn={true}
-          hideInfoBtn={true}
-          library={'NCBI Entrez Gene'}
-        />
-      )
-    });
+    if (this.props.os === 'android') {
+      IntentAndroid.canOpenURL(ncbiUrl, (supported) => {
+        if (supported) {
+          IntentAndroid.openURL(ncbiUrl);
+        }
+        console.log('Don\'t know how to open URI: ' + ncbiUrl);
+      });
+    } else {
+      this.props.navigator.push({
+        name: 'NCBI View',
+        component: WebV,
+        configureScene: Navigator.SceneConfigs.FloatFromBottom,
+        passProps: { url: ncbiUrl },
+        navigationBar: (
+          <NavBar
+            useXBtn={true}
+            hideInfoBtn={true}
+            library={'NCBI Entrez Gene'}
+          />
+        )
+      });
+    }
   },
   _getGeneInfo: function(inputGene) {
     var _this = this;

@@ -1,5 +1,4 @@
 var React = require('react-native');
-var libInfo = require('./libInfo');
 var LibraryList = require('./LibraryList');
 var NavBar = require('./NavBar');
 var StyleVars = require('./StyleVars');

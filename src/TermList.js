@@ -1,7 +1,6 @@
 var React = require('react-native');
 var WebV = require('./WebView');
 var NavBar = require('./NavBar');
-var libInfo = require('./libInfo');
 var StyleVars = require('./StyleVars');
 
 var {
@@ -16,6 +15,7 @@ var {
 } = StyleVars;
 
 var {
+  IntentAndroid,
   ListView,
   Navigator,
   PixelRatio,
@@ -119,24 +119,36 @@ var LibraryResults = React.createClass({
     );
   },
   _goToUrl: function(url) {
-    this.props.navigator.push({
-      name: 'Term View',
-      component: WebV,
-      configureScene: Navigator.SceneConfigs.FloatFromBottom,
-      passProps: { url: url },
-      navigationBar: (
-        <NavBar
-          useXBtn={true}
-          hideInfoBtn={true}
-        />
-      )
-    });
+    if (this.props.os === 'android') {
+      IntentAndroid.canOpenURL(url, (supported) => {
+        if (supported) {
+          IntentAndroid.openURL(url);
+        }
+        console.log('Don\'t know how to open URI: ' + this.props.url);
+      });
+    } else {
+      this.props.navigator.push({
+        name: 'Term View',
+        component: WebV,
+        configureScene: Navigator.SceneConfigs.FloatFromBottom,
+        passProps: { url: url },
+        navigationBar: (
+          <NavBar
+            useXBtn={true}
+            hideInfoBtn={true}
+          />
+        )
+      });
+    }
   }
 });
 
 var styles = StyleSheet.create({
   libraryDesc: {
-    padding: 10,
+    marginTop: 10,
+    marginRight: 10,
+    marginLeft: 10,
+    marginBottom: 0,
   },
   listView: {
     backgroundColor: colorBackground,

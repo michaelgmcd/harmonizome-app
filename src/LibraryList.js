@@ -89,35 +89,35 @@ var LibraryResults = React.createClass({
     });
   },
   _renderLibrary: function(libObj) {
+    if (libObj.text && libObj.text.length) {
+      return <Text style={styles.libText}>{libObj.text}</Text>;
+    }
     return (
       <TouchableOpacity
         style={styles.rowWrapper}
         onPress={() => this._goToTerms(libObj)}>
-        {!!libObj.text && libObj.text.length
-          ? <Text style={styles.libText}>{libObj.text}</Text>
-          : <View style={styles.rowInner}>
-              <View style={styles.rowInfo}>
-                <Text style={[
-                  styles.libraryTitle,
-                  { fontSize: libObj.name.length < 30 ? 16 : 15 },
-                ]}>
-                  {libObj.name}
-                </Text>
-                <Text style={styles.libraryDesc}>
-                  {libObj.description}
-                </Text>
-              </View>
-              <TouchableOpacity
-                style={styles.rowNav}
-                onPress={() => this._goToTerms(libObj)}>
-                <Image
-                  source={require('image!nav_forward')}
-                  resizeMode={'contain'}
-                  style={{height: 80, width: 20}}
-                />
-              </TouchableOpacity>
-            </View>
-        }
+        <View style={styles.rowInner}>
+          <View style={styles.rowInfo}>
+            <Text style={[
+              styles.libraryTitle,
+              { fontSize: libObj.name.length < 30 ? 16 : 15 },
+            ]}>
+              {libObj.name}
+            </Text>
+            <Text style={styles.libraryDesc}>
+              {libObj.description}
+            </Text>
+          </View>
+          <TouchableOpacity
+            style={styles.rowNav}
+            onPress={() => this._goToTerms(libObj)}>
+            <Image
+              source={require('image!nav_forward')}
+              resizeMode={'contain'}
+              style={{height: 80, width: 20}}
+            />
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
     );
   }
@@ -126,8 +126,10 @@ var LibraryResults = React.createClass({
 var styles = StyleSheet.create({
   libText: {
     fontFamily: fontFamily,
-    paddingLeft: 10,
-    paddingRight: 10,
+    marginTop: 10,
+    marginRight: 10,
+    marginLeft: 10,
+    marginBottom: 0,
   },
   listView: {
     backgroundColor: colorBackground,

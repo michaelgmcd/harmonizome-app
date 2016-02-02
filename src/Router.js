@@ -5,13 +5,11 @@ var Styles = require('./StyleVars');
 var {colorPrimary} = Styles;
 
 var {
-  BackAndroid,
+  IntentAndroid,
   Navigator,
   StyleSheet,
   View,
 } = React;
-
-var DEVICE_IS_ANDROID = false;
 
 var router = React.createClass({
   componentWillMount: function() {
@@ -39,33 +37,20 @@ var router = React.createClass({
     : Navigator.SceneConfigs.FloatFromRight;
   },
   _renderScene: function(route, navigator) {
-    if (DEVICE_IS_ANDROID) {
-      BackAndroid.addEventListener('hardwareBackPress', function() {
-        if (route.name !== 'Home') {
-          navigator.pop();
-          return true;
-        }
-        return false;
-      });
-    }
     var Component = route.component;
     var navBar = route.navigationBar;
     var modal = route.modal;
     var routeProps = route.passProps;
+    var os = this.props.os;
 
     if (navBar) {
-      navBar = React.addons.cloneWithProps(navBar, {
-        navigator, route,
+      navBar = React.cloneElement(navBar, {
+        navigator, route, os,
       });
     }
 
-    if (this.props.os === 'android' && routeProps && routeProps.url) {
-      var webIntent = require('react-native-webintent');
-      return webIntent.open(routeProps.url);
-    }
-
     return (
-      <View style={{ flex: 1, }}>
+      <View style={{ flex: 1 }}>
         {navBar}
         <Component
           {...routeProps}
@@ -77,6 +62,7 @@ var router = React.createClass({
           ? <GeneModal
               navigator={navigator}
               gene={route.gene}
+              os={this.props.os}
               onClose={() => {
 
                 navigator.replace(
