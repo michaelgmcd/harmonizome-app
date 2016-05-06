@@ -31,6 +31,8 @@ var LibraryResults = React.createClass({
     idRegExp: React.PropTypes.string,
     idRegExpFlag: React.PropTypes.string,
     baseUrl: React.PropTypes.string,
+    splitChar: React.PropTypes.string,
+    useFirstTerm: React.PropTypes.bool,
     useTermName: React.PropTypes.bool,
     libraryDesc: React.PropTypes.string,
     terms: React.PropTypes.array
@@ -60,10 +62,14 @@ var LibraryResults = React.createClass({
     }
     var _this = this;
     try {
-      var idReg = this.props.idRegExp || '';
-      var idRegEx = new RegExp(idReg, 'i');
+      var dsId;
+      if (this.props.idRegExp && this.props.idRegExp.length) {
+        var regex = new RegExp(this.props.idRegExp, 'i');
+        dsId = term.match(regex);
+      }
       var geoRegEx = /[Gg][DdSs][EeMmSs]\d{3,7}/;
-      var dsId = term.match(idRegEx);
+      var splitChar = this.props.splitChar;
+      var useFirstTerm = this.props.useFirstTerm;
       var showId = true;
       if (dsId && dsId[0].length > 20) {
         showId = false;
@@ -129,6 +135,20 @@ var LibraryResults = React.createClass({
                       {idName}
                     </Text>
                 }
+              </Text>
+            : useFirstTerm && splitChar.length
+            ? <Text>
+                <Text>{idName}: </Text>
+                <Text
+                  style={styles.url}
+                  onPress={() => {
+                    var dsUrl = baseUrl + term.split(splitChar)[0];
+                    console.log(dsUrl);
+                    console.log(term);
+                    this._goToUrl(dsUrl);
+                  }}>
+                  {term.split(splitChar)[0]}
+                </Text>
               </Text>
             : null
           }
