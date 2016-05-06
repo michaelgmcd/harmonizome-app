@@ -22,6 +22,7 @@ module.exports = {
   },
   removeSearch: function(searchStr) {
     if (exists(searchStr)) {
+      var index = RECENT_SEARCHES.indexOf(searchStr);
       RECENT_SEARCHES.splice(index, 1);
     }
   },

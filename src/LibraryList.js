@@ -60,6 +60,8 @@ var LibraryResults = React.createClass({
         terms: libObj.terms,
         libraryName: libObj.name,
         idName: libObj.idName,
+        idRegExp: libObj.idRegExp,
+        idRegExpFlag: libObj.idRegExpFlag,
         baseUrl: libObj.baseUrl,
         useTermName: libObj.useTermName,
         libraryDesc: libObj.description,

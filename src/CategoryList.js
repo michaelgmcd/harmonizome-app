@@ -140,7 +140,9 @@ var Results = React.createClass({
   },
   _getGSLibraries: function(inputGene) {
     var _this = this;
-    var termsUrl = 'http://amp.pharm.mssm.edu/ha-libraries/results?' +
+    // var termsUrl = 'http://amp.pharm.mssm.edu/ha-libraries/results?' +
+    //   'gene=' + inputGene;
+    var termsUrl = 'http://localhost:4224/ha-libraries/results?' +
       'gene=' + inputGene;
     fetch(termsUrl)
       .then((tResponse) => tResponse.json())

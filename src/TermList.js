@@ -28,6 +28,8 @@ var LibraryResults = React.createClass({
   propTypes: {
     libraryName: React.PropTypes.string,
     idName: React.PropTypes.string,
+    idRegExp: React.PropTypes.string,
+    idRegExpFlag: React.PropTypes.string,
     baseUrl: React.PropTypes.string,
     useTermName: React.PropTypes.bool,
     libraryDesc: React.PropTypes.string,
@@ -54,15 +56,18 @@ var LibraryResults = React.createClass({
   },
   renderTerms: function(term) {
     if (!!term.libraryDesc || term.libraryDesc === '') {
-      return (
-        <Text style={styles.libraryDesc}>{term.libraryDesc}</Text>
-      );
+      return <Text style={styles.libraryDesc}>{term.libraryDesc}</Text>;
     }
     var _this = this;
     try {
-      var idRegEx = /(\d{7,8})/g;
+      var idReg = this.props.idRegExp || '';
+      var idRegEx = new RegExp(idReg, 'i');
       var geoRegEx = /[Gg][DdSs][EeMmSs]\d{3,7}/;
       var dsId = term.match(idRegEx);
+      var showId = true;
+      if (dsId && dsId[0].length > 20) {
+        showId = false;
+      }
       var geoAccession = term.match(geoRegEx);
       var useTermName = this.props.useTermName || false;
       var idName = this.props.idName || '';
@@ -102,15 +107,28 @@ var LibraryResults = React.createClass({
               </Text>
             : dsId && idName.length && baseUrl.length
             ? <Text>
-                <Text>{idName}: </Text>
-                <Text
-                  style={styles.url}
-                  onPress={() => {
-                    var dsUrl = baseUrl + dsId;
-                    this._goToUrl(dsUrl);
-                  }}>
-                  {dsId}
-                </Text>
+                {
+                  showId
+                  ? <Text>
+                      <Text>{idName}: </Text>
+                      <Text
+                        style={styles.url}
+                        onPress={() => {
+                          var dsUrl = baseUrl + dsId;
+                          this._goToUrl(dsUrl);
+                        }}>
+                        {dsId}
+                      </Text>
+                    </Text>
+                  : <Text
+                      style={styles.url}
+                      onPress={() => {
+                        var dsUrl = baseUrl + dsId;
+                        this._goToUrl(dsUrl);
+                      }}>
+                      {idName}
+                    </Text>
+                }
               </Text>
             : null
           }
