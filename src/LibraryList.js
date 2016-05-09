@@ -53,7 +53,6 @@ var LibraryResults = React.createClass({
     );
   },
   _goToTerms: function(libObj) {
-    console.log(libObj);
     this.props.navigator.push({
       name: 'Term List',
       component: TermList,

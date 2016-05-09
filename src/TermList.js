@@ -143,8 +143,6 @@ var LibraryResults = React.createClass({
                   style={styles.url}
                   onPress={() => {
                     var dsUrl = baseUrl + term.split(splitChar)[0];
-                    console.log(dsUrl);
-                    console.log(term);
                     this._goToUrl(dsUrl);
                   }}>
                   {term.split(splitChar)[0]}

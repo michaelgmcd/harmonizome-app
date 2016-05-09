@@ -36,3 +36,6 @@ npm-debug.log
 # Android Release
 *.apk
 *.keystore
+
+# iOS Release
+*.jsbundle
